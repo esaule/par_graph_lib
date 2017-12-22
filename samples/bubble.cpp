@@ -4,6 +4,7 @@
 #include <map>
 #include <Bridges.h>
 #include <GraphAdjList.h>
+#include <vector>
 
 namespace depgraph {
 
@@ -15,11 +16,9 @@ namespace depgraph {
     } ac;
   };
   
-  std::list<std::string> tasklist;
+  std::vector<std::string> tasklist;
 
   std::map<std::string, std::list<variableaccess> > accessmap;
-
-  
   
   void newtask(const std::string& name) {
     tasklist.push_back(name);
@@ -44,32 +43,47 @@ namespace depgraph {
     }
   }
 
-  void visualize(){
-    bridges::Bridges::initialize(1, "esaule", "182708497087");
+  std::vector< std::list<int> > basic_graph;
 
-    bridges::GraphAdjList<string,int> g;
+  void build_graph() {
+
+    basic_graph.resize(tasklist.size());
     
-    for (auto& s: tasklist) {
-      g.addVertex(s, 0);
-
+    for (int u=0; u<basic_graph.size(); ++u) {
+      auto& s = tasklist[u];
       //"it" is before "s"
-      for (auto it = tasklist.begin(); *it != s; it++) {
+      for (int v = 0; v< u; ++v) {
 	//all the variables access by it
-	for (auto& va : accessmap[*it]) {
+	for (auto& va : accessmap[tasklist[v]]) {
 	  auto varfind = std::find_if(accessmap[s].begin(), accessmap[s].end(), [&] (const variableaccess& v) { return v.var == va.var;});
 	  if (varfind != accessmap[s].end() ) {
 	    //NOT THE REAL CONDITION
 	    if (va.ac !=variableaccess::access::READ ||
-		varfind->ac !=variableaccess::access::READ)
-	      g.addEdge(*it, s, 1);
+		varfind->ac !=variableaccess::access::READ) {
+	      basic_graph[u].push_back(v);
+	      //g.addEdge(*it, s, 1);
+	    }
 	  }
 	}
       }
-
-
-      
     }
+    
+  }
+  
+  void visualize(){
+    build_graph();
+    
+    bridges::Bridges::initialize(1, "esaule", "182708497087");
 
+    bridges::GraphAdjList<string,int> g;
+    
+    for (int u=0; u<basic_graph.size(); ++u) {
+      g.addVertex(tasklist[u], 0);
+
+      for (auto v : basic_graph[u]) {
+	g.addEdge(tasklist[u], tasklist[v], 1);
+      }
+    }
     
     
     bridges::Bridges::setDataStructure(&g);
