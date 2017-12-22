@@ -2,6 +2,8 @@
 #include <sstream>
 #include <list>
 #include <map>
+#include <Bridges.h>
+#include <GraphAdjList.h>
 
 namespace depgraph {
 
@@ -40,6 +42,38 @@ namespace depgraph {
 	std::cout<<"  use var "<<p.var<<" "<<(p.ac==variableaccess::access::READ?"R":"W")<<std::endl;
       }
     }
+  }
+
+  void visualize(){
+    bridges::Bridges::initialize(1, "esaule", "182708497087");
+
+    bridges::GraphAdjList<string,int> g;
+    
+    for (auto& s: tasklist) {
+      g.addVertex(s, 0);
+
+      //"it" is before "s"
+      for (auto it = tasklist.begin(); *it != s; it++) {
+	//all the variables access by it
+	for (auto& va : accessmap[*it]) {
+	  auto varfind = std::find_if(accessmap[s].begin(), accessmap[s].end(), [&] (const variableaccess& v) { return v.var == va.var;});
+	  if (varfind != accessmap[s].end() ) {
+	    //NOT THE REAL CONDITION
+	    if (va.ac !=variableaccess::access::READ ||
+		varfind->ac !=variableaccess::access::READ)
+	      g.addEdge(*it, s, 1);
+	  }
+	}
+      }
+
+
+      
+    }
+
+    
+    
+    bridges::Bridges::setDataStructure(&g);
+    bridges::Bridges::visualize();
   }
 }
 
@@ -87,6 +121,9 @@ int main () {
   bubblesort(arr, SIZE);
 
   depgraph::listall();
+
+  depgraph::visualize();
+
   
   return 0;
 }
