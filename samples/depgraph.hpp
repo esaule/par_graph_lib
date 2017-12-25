@@ -153,15 +153,24 @@ namespace depgraph {
     }
 
     int x = sinkvertex;
+    int prev = sinkvertex; //previous vertex in the reconstructed path (so the next according to the topological order
     while (x >= 0) {
       //x is on the critical path      
 
       //color x in red
-      auto vert_viz = g.getVertices().find(tasklist[x])->second->getVisualizer();
-      vert_viz->setColor(bridges::Color(255,0,0));
+      auto vert_x_p = g.getVertices().find(tasklist[x])->second;
+      auto vert_viz_p = vert_x_p->getVisualizer();
+      vert_viz_p->setColor(bridges::Color(255,0,0));
       
-      
-      
+      //color the edge
+      if (x != prev) {
+	auto vert_prev_p = g.getVertices().find(tasklist[prev])->second;
+	auto link_viz_p = vert_x_p->getLinkVisualizer(vert_prev_p);
+	link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS * 10.);
+	link_viz_p->setColor(bridges::Color(255,0,0));
+      }
+
+      prev = x;
       x = predecessor[x];
     }
     
