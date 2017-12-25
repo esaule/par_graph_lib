@@ -1,4 +1,4 @@
-CXXFLAGS=-std=c++14 -I ../bridges/src/
+CXXFLAGS=-std=c++14 -I ../bridges/src/ -O3
 LDFLAGS=-l curl
 
 LD=g++
@@ -12,4 +12,5 @@ depends:
 
 # DO NOT DELETE
 
-bubble.o: depgraph.hpp
+bubble.o: depgraph.hpp depgraph_visualize.hpp depgraph_debug.hpp
+depgraph.o: depgraph_visualize.hpp depgraph_debug.hpp

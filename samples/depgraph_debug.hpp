@@ -1,4 +1,5 @@
-
+#ifndef DEPGRAPH_DEBUG_HPP
+#define DEPGRAPH_DEBUG_HPP
 
 namespace depgraph {
   void listall() {
@@ -11,3 +12,5 @@ namespace depgraph {
     }
   }
 }
+
+#endif
