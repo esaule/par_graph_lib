@@ -8,7 +8,6 @@
 #include <GraphAdjList.h>
 #include <vector>
 
-
 namespace depgraph {
 
   struct variableaccess {
@@ -36,6 +35,10 @@ namespace depgraph {
     newtask(ss.str());
   }
 
+  void setprocessingtime(int pi) {
+    processing_time[processing_time.size()-1] = pi;
+  }
+  
   void read(const std::string& name) {
     //assumes tasklist is not empty
     variableaccess va1 = {name, variableaccess::access::READ};
@@ -54,15 +57,6 @@ namespace depgraph {
     write(name);
   }
   
-  void listall() {
-    for (auto& ta : tasklist) {
-      std::cout<<"task "<<ta<<std::endl;
-
-      for (auto& p : accessmap[ta]) {
-	std::cout<<"  use var "<<p.var<<" "<<(p.ac==variableaccess::access::READ?"R":"W")<<std::endl;
-      }
-    }
-  }
 
   std::vector< std::list<int> > basic_graph;
 
@@ -220,5 +214,9 @@ namespace depgraph {
   }
   
 }
+
+
+#include "depgraph_debug.hpp"
+
 
 #endif
