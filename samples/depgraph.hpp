@@ -29,16 +29,31 @@ namespace depgraph {
     tasklist.push_back(name);
     processing_time.push_back(1);
   }
-  
-  void readwrite(const std::string& name) {
-    //assume tasklist is not empty
 
+  void newtask() {
+    std::stringstream ss;
+    ss<<tasklist.size()+1<<std::endl;
+    newtask(ss.str());
+  }
+
+  void read(const std::string& name) {
+    //assumes tasklist is not empty
     variableaccess va1 = {name, variableaccess::access::READ};
     accessmap[*(--(tasklist.end()))].push_back(va1);
+  }
+
+
+  void write(const std::string& name) {
+    //assumes tasklist is not empty
     variableaccess va2 = {name, variableaccess::access::WRITE}; 
     accessmap[*(--(tasklist.end()))].push_back(va2);
   }
 
+  void readwrite(const std::string& name) {
+    read(name);
+    write(name);
+  }
+  
   void listall() {
     for (auto& ta : tasklist) {
       std::cout<<"task "<<ta<<std::endl;
