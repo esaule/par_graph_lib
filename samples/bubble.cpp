@@ -6,25 +6,12 @@ void bubblesort(int* A, int n) {
   for (int i=0; i<n; ++i) {
     for (int j=1; j<n; ++j) {
 
-      {
-	std::stringstream ss;
-	ss<<"("<<i<<","<<j<<")";
-	depgraph::newtask (ss.str());
-      }
+      {	std::stringstream ss; ss<<"("<<i<<","<<j<<")"; depgraph::newtask (ss.str()); }
             
+      { std::stringstream ss; ss<<"A["<<j<<"]"; depgraph::readwrite (ss.str()); }
+            
+      { std::stringstream ss; ss<<"A["<<j-1<<"]"; depgraph::readwrite (ss.str()); }
       
-      {
-	std::stringstream ss;
-	ss<<"A["<<j<<"]";
-	depgraph::readwrite (ss.str());
-      }
-
-            
-      {
-	std::stringstream ss;
-	ss<<"A["<<j-1<<"]";
-	depgraph::readwrite (ss.str());
-      }
       if (A[j] < A[j-1]) {
         int temp = A[j];
         A[j] = A[j-1];
@@ -49,6 +36,7 @@ int main () {
 
 
   depgraph::visualize(1, true);
+  depgraph::visualize(2, false);
   
   // depgraph::visualize_basic();
 
