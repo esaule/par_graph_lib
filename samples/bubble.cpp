@@ -34,14 +34,8 @@ int main () {
 
   depgraph::listall();
 
-
   depgraph::visualize(1, true);
   depgraph::visualize(2, false);
-  
-  // depgraph::visualize_basic();
-
-  // depgraph::visualize_simplified();
-
   
   return 0;
 }
