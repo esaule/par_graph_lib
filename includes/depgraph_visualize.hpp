@@ -1,6 +1,8 @@
 #ifndef DEPGRAPH_VIZ_HPP
 #define DEPGRAPH_VIZ_HPP
 
+#include <chrono>
+
 namespace depgraph {
 
   //s is the graphs to remove transitive edges from
@@ -135,6 +137,9 @@ namespace depgraph {
   void visualize(int channel,
 		 bool use_simple = false,
 		 bool highlightCP = true) {
+
+    auto start = std::chrono::system_clock::now();
+    
     bridges::Bridges::initialize(channel, "esaule", "182708497087");
 
     if (basic_graph.size() == 0) //if not built
@@ -160,55 +165,17 @@ namespace depgraph {
       highlight_criticalpath();
         
     bridges::Bridges::setDataStructure(&g);
+    
+    auto end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end-start;
+ 
+    std::cout << "time to build viz: " << elapsed_seconds.count() << "s\n";
+    
     bridges::Bridges::visualize();
+
   }
     
-  
-  void visualize_basic(){
-    build_graph();
-    
-    bridges::Bridges::initialize(1, "esaule", "182708497087");
-
-    g =  bridges::GraphAdjList<string,int>();
-    
-    for (int u=0; u<basic_graph.size(); ++u) {
-      g.addVertex(tasklist[u], 0);
-      
-    }
-
-    for (int u=0; u<basic_graph.size(); ++u) {
-      for (auto v : basic_graph[u]) {
-	g.addEdge(tasklist[u], tasklist[v], 1);
-      }
-    }
-    
-    bridges::Bridges::setDataStructure(&g);
-    bridges::Bridges::visualize();
-  }
-
-  void visualize_simplified(){
-    build_graph();
-    remove_transitive(basic_graph, simplified_graph);
-    
-    bridges::Bridges::initialize(2, "esaule", "182708497087");
-
-    g =  bridges::GraphAdjList<string,int>();
-
-    for (int u=0; u<simplified_graph.size(); ++u) {
-      g.addVertex(tasklist[u], 0);
-    }
-    
-    for (int u=0; u<simplified_graph.size(); ++u) {
-      for (auto v : simplified_graph[u]) {
-	g.addEdge(tasklist[u], tasklist[v], 1);
-      }
-    }
-
-    highlight_criticalpath();
-    
-    bridges::Bridges::setDataStructure(&g);
-    bridges::Bridges::visualize();
-  }
 }
 
 

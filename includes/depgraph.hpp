@@ -77,7 +77,6 @@ namespace depgraph {
     read(name);
     write(name);
   }
-  
 }
 
 #include "depgraph_visualize.hpp"
