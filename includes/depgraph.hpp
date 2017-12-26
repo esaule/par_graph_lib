@@ -7,6 +7,8 @@
 #include <Bridges.h>
 #include <GraphAdjList.h>
 #include <vector>
+#include <set>
+
 
 namespace depgraph {
 
@@ -16,13 +18,21 @@ namespace depgraph {
       READ,
       WRITE
     } ac;
+
+    bool operator< (const variableaccess& va) const {
+      if (this->var < va.var)
+	return true;
+      if (this->var > va.var)
+	return false;
+      return (this->ac < va.ac);
+    }
   };
   
   std::vector<std::string> tasklist;
 
   std::vector<int> processing_time;
   
-  std::map<std::string, std::list<variableaccess> > accessmap;
+  std::map<std::string, std::set<variableaccess> > accessmap;
   
   ///declares a new task with a given name
   ///@param name name of the task
@@ -48,9 +58,8 @@ namespace depgraph {
   void read(const std::string& name) {
     //assumes tasklist is not empty
 
-    //TODO: should check for double insertion
     variableaccess va1 = {name, variableaccess::access::READ};
-    accessmap[*(--(tasklist.end()))].push_back(va1);
+    accessmap[*(--(tasklist.end()))].insert(va1);
   }
 
   ///declares that the current task writes the given variable
@@ -58,9 +67,8 @@ namespace depgraph {
   void write(const std::string& name) {
     //assumes tasklist is not empty
 
-    //TODO: should check for double insertion
-    variableaccess va2 = {name, variableaccess::access::WRITE}; 
-    accessmap[*(--(tasklist.end()))].push_back(va2);
+    variableaccess va1 = {name, variableaccess::access::WRITE}; 
+    accessmap[*(--(tasklist.end()))].insert(va1);
   }
   
   ///declares that the current task reads and writes the given variable
