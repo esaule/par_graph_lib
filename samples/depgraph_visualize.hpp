@@ -2,9 +2,6 @@
 #define DEPGRAPH_VIZ_HPP
 
 namespace depgraph {
-  std::vector< std::list<int> > basic_graph;
-
-  std::vector< std::list<int> > simplified_graph;
 
   //s is the graphs to remove transitive edges from
   //u is the vertex to remove outgoing edges from
@@ -41,7 +38,11 @@ namespace depgraph {
     for (int x=0; x<bg.size(); ++x)
       remove_transitive_node(s, x);    
   }
-  
+
+  std::vector< std::list<int> > basic_graph;
+
+  std::vector< std::list<int> > simplified_graph;
+
   void build_graph() {
     basic_graph.resize(tasklist.size());
     
@@ -63,36 +64,46 @@ namespace depgraph {
 	}
       }
     }
-
-    remove_transitive(basic_graph, simplified_graph);
   }
 
   bridges::GraphAdjList<string,int> g;
 
 
+  std::vector<int> toplevel;
+  std::vector<int> predecessor;
+  int sinkvertex;
+  
   //this algorithm works because the vertices are topo sorted
   void highlight_criticalpath() {
-    std::vector<int> toplevel (simplified_graph.size(), 0);
-
-    std::vector<int> predecessor (simplified_graph.size(), -1);
     
-    int maxlevel = 0;
-    int sinkvertex = -1;
-    
-    //compute top level, predecessor, and maxlevel
-    for (int u=0; u<simplified_graph.size(); ++u) {
-      toplevel[u] += processing_time[u];
 
-      for (auto v : simplified_graph[u]) {
-	if (toplevel[u] > toplevel[v]) {
-	  toplevel[v] = toplevel[u];
-	  predecessor[v] = u;
+    if (toplevel.size() == 0) {
+
+      if (simplified_graph.size() == 0) //not built
+	remove_transitive(basic_graph, simplified_graph);
+
+      
+      toplevel = std::vector<int> (simplified_graph.size(), 0);
+      predecessor = std::vector<int> (simplified_graph.size(), -1);
+      
+      int maxlevel = 0;
+      sinkvertex = -1;
+      
+      //compute top level, predecessor, and maxlevel
+      for (int u=0; u<simplified_graph.size(); ++u) {
+	toplevel[u] += processing_time[u];
+	
+	for (auto v : simplified_graph[u]) {
+	  if (toplevel[u] > toplevel[v]) {
+	    toplevel[v] = toplevel[u];
+	    predecessor[v] = u;
+	  }
 	}
-      }
-
-      if (toplevel[u] > maxlevel) {
-	maxlevel = toplevel[u];
-	sinkvertex = u;
+	
+	if (toplevel[u] > maxlevel) {
+	  maxlevel = toplevel[u];
+	  sinkvertex = u;
+	}
       }
     }
 
@@ -120,8 +131,40 @@ namespace depgraph {
     
   }
 
+
+  void visualize(int channel,
+		 bool use_simple = false,
+		 bool highlightCP = true) {
+    bridges::Bridges::initialize(channel, "esaule", "182708497087");
+
+    if (basic_graph.size() == 0) //if not built
+      build_graph();
+
+    if ((!use_simple) 
+	&& simplified_graph.size() == 0) //not built
+      remove_transitive(basic_graph, simplified_graph);
+
+    g = bridges::GraphAdjList<string,int>();
+
+    for (int u=0; u<tasklist.size(); ++u) {
+      g.addVertex(tasklist[u], 0);
+    }
+    
+    for (int u=0; u<tasklist.size(); ++u) {
+      for (auto v : (use_simple?basic_graph:simplified_graph)[u]) {
+	g.addEdge(tasklist[u], tasklist[v], 1);
+      }
+    }
+
+    if (highlightCP)
+      highlight_criticalpath();
+        
+    bridges::Bridges::setDataStructure(&g);
+    bridges::Bridges::visualize();
+  }
+    
   
-  void visualize(){
+  void visualize_basic(){
     build_graph();
     
     bridges::Bridges::initialize(1, "esaule", "182708497087");
@@ -145,6 +188,7 @@ namespace depgraph {
 
   void visualize_simplified(){
     build_graph();
+    remove_transitive(basic_graph, simplified_graph);
     
     bridges::Bridges::initialize(2, "esaule", "182708497087");
 

@@ -47,9 +47,12 @@ int main () {
 
   depgraph::listall();
 
-  depgraph::visualize();
 
-  depgraph::visualize_simplified();
+  depgraph::visualize(1, true);
+  
+  // depgraph::visualize_basic();
+
+  // depgraph::visualize_simplified();
 
   
   return 0;
