@@ -47,6 +47,8 @@ namespace depgraph {
   ///@param name name of the variable read by the task
   void read(const std::string& name) {
     //assumes tasklist is not empty
+
+    //TODO: should check for double insertion
     variableaccess va1 = {name, variableaccess::access::READ};
     accessmap[*(--(tasklist.end()))].push_back(va1);
   }
@@ -55,6 +57,8 @@ namespace depgraph {
   ///@param name name of the variable writes by the task
   void write(const std::string& name) {
     //assumes tasklist is not empty
+
+    //TODO: should check for double insertion
     variableaccess va2 = {name, variableaccess::access::WRITE}; 
     accessmap[*(--(tasklist.end()))].push_back(va2);
   }

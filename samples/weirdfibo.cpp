@@ -28,12 +28,13 @@ void fibo() {
       
     fibo_v[i] = 1;
   }
+  
   for(int i=2*DISTANCE; i<N; ++i) {
     { std::stringstream ss; ss<<"fibo_"<<i; depgraph::newtask (ss.str()); }
-    { std::stringstream ss; ss<<"fibo_v["<<i<<"]"; depgraph::write (ss.str()); }
     fibo_v[i] = 0;
     for (int j=0; j<DISTANCE; ++j) {
       { std::stringstream ss; ss<<"fibo_v["<<i-j-DISTANCE<<"]"; depgraph::read (ss.str()); }
+      { std::stringstream ss; ss<<"fibo_v["<<i<<"]"; depgraph::write (ss.str()); }
       
       fibo_v[i] += fibo_v[i-j-DISTANCE];
     }
