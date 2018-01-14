@@ -2,6 +2,8 @@
 #define DEPGRAPH_VIZ_HPP
 
 #include <chrono>
+#include <iostream>
+#include <fstream>
 
 namespace depgraph {
 
@@ -133,14 +135,37 @@ namespace depgraph {
     
   }
 
+  void get_bridges_account (std::string& username,
+			    std::string& apikey) {
+
+    std::string filename = "/home/erik/.config/pargraphrc";
+
+    std::ifstream in (filename.c_str());
+    if (!in) {
+      std::cerr<<"can't read "<<filename<<std::endl;
+      return;
+    }
+    in >> username;
+    in >> apikey;
+    if (!in) {
+      std::cerr<<"can't read "<<filename<<std::endl;
+      return;
+    }
+  }
+  
 
   void visualize(int channel,
 		 bool use_simple = false,
 		 bool highlightCP = true) {
 
     auto start = std::chrono::system_clock::now();
+
+    std::string bridges_user;
+    std::string bridges_apikey;
+
+    get_bridges_account(bridges_user, bridges_apikey);
     
-    bridges::Bridges::initialize(channel, "esaule", "182708497087");
+    bridges::Bridges::initialize(channel, bridges_user, bridges_apikey);
 
     if (basic_graph.size() == 0) //if not built
       build_graph();
