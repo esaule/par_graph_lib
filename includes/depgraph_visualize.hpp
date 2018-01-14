@@ -160,12 +160,14 @@ namespace depgraph {
     std::ifstream in (filename.c_str());
     if (!in) {
       std::cerr<<"can't read "<<filename<<std::endl;
+      std::cerr<<"should contain bridges username on the first line and bridges apikey on the second line"<<std::endl;
       return;
     }
     in >> username;
     in >> apikey;
     if (!in) {
       std::cerr<<"can't read "<<filename<<std::endl;
+      std::cerr<<"should contain bridges username on the first line and bridges apikey on the second line"<<std::endl;
       return;
     }
   }
