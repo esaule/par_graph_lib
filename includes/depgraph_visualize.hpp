@@ -5,6 +5,10 @@
 #include <iostream>
 #include <fstream>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 namespace depgraph {
 
   //s is the graphs to remove transitive edges from
@@ -138,7 +142,20 @@ namespace depgraph {
   void get_bridges_account (std::string& username,
 			    std::string& apikey) {
 
-    std::string filename = "/home/erik/.config/pargraphrc";
+    std::string configdir_name;
+
+    const char *homedir;
+
+    if ((homedir = getenv("HOME")) == NULL) {
+      homedir = getpwuid(getuid())->pw_dir;
+    }
+    
+    std::string filename;
+    {
+      std::stringstream ss;
+      ss<<homedir<<"/.pargraphrc";
+      filename = ss.str();
+    }
 
     std::ifstream in (filename.c_str());
     if (!in) {
