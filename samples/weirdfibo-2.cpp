@@ -1,3 +1,6 @@
+///This is a version of weirdfibo where many tasks are created for
+///each iteration of the inner loop of the calculation.
+
 #include <iostream>
 #include <sstream>
 #include "depgraph.hpp"
@@ -16,9 +19,14 @@ void fibo() {
   }
   
   for(int i=2*DISTANCE; i<N; ++i) {
-    { std::stringstream ss; ss<<"fibo_"<<i; depgraph::newtask (ss.str()); }
+    { std::stringstream ss; ss<<"fibo_"<<i<<"-pre"; depgraph::newtask (ss.str()); }
+
+    { std::stringstream ss; ss<<"fibo_v["<<i<<"]"; depgraph::write (ss.str()); }
     fibo_v[i] = 0;
     for (int j=0; j<DISTANCE; ++j) {
+      { std::stringstream ss; ss<<"fibo_"<<i<<"_"<<j; depgraph::newtask (ss.str()); }
+
+
       { std::stringstream ss; ss<<"fibo_v["<<i-j-DISTANCE<<"]"; depgraph::read (ss.str()); }
       { std::stringstream ss; ss<<"fibo_v["<<i<<"]"; depgraph::readwrite (ss.str()); }
       
