@@ -8,12 +8,16 @@ void bubblesort(int* A, int n) {
 
       {	std::stringstream ss; ss<<"("<<i<<","<<j<<")"; depgraph::newtask (ss.str()); }
             
+
+      //The accesses to A[j] and A[j-1] are declared out of the test
+      //because it may or may not happen depending on the array.
       { std::stringstream ss; ss<<"A["<<j<<"]"; depgraph::readwrite (ss.str()); }
             
       { std::stringstream ss; ss<<"A["<<j-1<<"]"; depgraph::readwrite (ss.str()); }
       
       if (A[j] < A[j-1]) {
-        int temp = A[j];
+        int temp = A[j]; //There is no access to temp declared because
+			 //the variable is inside the task
         A[j] = A[j-1];
         A[j-1] = temp;
       }
