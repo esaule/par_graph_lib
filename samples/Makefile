@@ -1,12 +1,18 @@
 CXXFLAGS=-std=c++14 -I ../bridges/src/ -O3 -I ../includes
-LDFLAGS=-l curl
+LDFLAGS=
+LDLIBS=-l curl
 
 LD=g++
 CC=g++
 
-bubble: 
+BINS=bubble lcs matvec-1 matvec-2 weirdfibo weirdfibo-2
+OBJS=bubble.o lcs.o matvec-1.o matvec-2.o weirdfibo.o weirdfibo-2.o
 
-weirdfibo:
+all:$(BINS)
+
+clean:
+	-rm $(BINS)
+	-rm $(OBJS)
 
 depends:
 	makedepend -I . -I ../includes -f Makefile *.cpp *.hpp
