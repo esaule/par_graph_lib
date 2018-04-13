@@ -25,11 +25,24 @@ void bubblesort(int* A, int n) {
   }
 }
 
-#define SIZE 10
-int arr[SIZE];
 
-int main () {
 
+int main (int argc, char* argv[]) {
+  int* arr;
+
+  if (argc < 2) {
+    std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]";
+  }
+  
+  int SIZE = atoi(argv[1]); //TODO: unsafe
+  int completeviz = 1;
+  int reducedviz = 2;
+  if (argc > 2)
+    completeviz = atoi(argv[2]); //TODO: unsafe
+  if (argc > 3)
+    reducedviz = atoi(argv[3]); //TODO: unsafe
+  arr = new int[SIZE];
+  
   for (int i=0; i<SIZE; ++i) {
     arr[i] = i*134+3542445%223;
   }
@@ -38,8 +51,10 @@ int main () {
 
   depgraph::listall();
 
-  depgraph::visualize(1, true);
-  depgraph::visualize(2, false);
+  depgraph::visualize(completeviz, true);
+  depgraph::visualize(reducedviz, false);
+
+  delete[] arr;
   
   return 0;
 }
