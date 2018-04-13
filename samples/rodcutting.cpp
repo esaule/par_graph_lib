@@ -27,6 +27,7 @@ int cutRod(int price[], int n)
 	 { std::stringstream ss; ss<<"("<<i<<","<<j<<")"; depgraph::newtask (ss.str()); }
 	 { std::stringstream ss; ss<<"val["<<i<<"]"; depgraph::readwrite (ss.str()); }
 	 { std::stringstream ss; ss<<"val["<<j<<"]"; depgraph::read (ss.str()); }
+	 { std::stringstream ss; ss<<"price["<<i-j<<"]"; depgraph::read (ss.str()); }
     	 
 	 val[i] = max(val[i], price[i-j] + val[j]);
        }
