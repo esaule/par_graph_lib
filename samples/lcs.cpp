@@ -42,12 +42,25 @@ int LCSLength(char* X, int m, char* Y, int n) {
 }
 
 
-#define SIZE 10
-char arr1[SIZE];
-char arr2[SIZE];
+int main (int argc, char* argv[]) {
+  char* arr1;
+  char* arr2;
 
-int main () {
+  if (argc < 2) {
+    std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]";
+  }
+  
+  int SIZE = atoi(argv[1]); //TODO: unsafe
+  int completeviz = 1;
+  int reducedviz = 2;
+  if (argc > 2)
+    completeviz = atoi(argv[2]); //TODO: unsafe
+  if (argc > 3)
+    reducedviz = atoi(argv[3]); //TODO: unsafe
 
+  arr1 = new char[SIZE];
+  arr2 = new char[SIZE];
+  
   for (int i=0; i<SIZE; ++i) {
     arr1[i] = i*134+3542445%223;
     arr2[i] = i*134+3542445%223;
@@ -57,8 +70,11 @@ int main () {
 
   depgraph::listall();
 
-  depgraph::visualize(1, true);
-  depgraph::visualize(2, false);
+  depgraph::visualize(completeviz, true);
+  depgraph::visualize(reducedviz, false);
+
+  delete[] arr1;
+  delete[] arr2;
   
   return 0;
 }
