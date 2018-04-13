@@ -37,17 +37,35 @@ int cutRod(int price[], int n)
 
 
 /* Driver program to test above functions */
-int main()
-{
-    int arr[] = {1, 5, 8, 9, 10, 17, 17, 20};
-    int size = sizeof(arr)/sizeof(arr[0]);
-    printf("Maximum Obtainable Value is %dn", cutRod(arr, size));
+int main(int argc, char* argv[]) {
 
-    depgraph::listall();
-    
-    depgraph::visualize(1, true);
-    depgraph::visualize(2, false);
+  if (argc < 2) {
+    std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]";
+  }
+  
+  int SIZE = atoi(argv[1]); //TODO: unsafe
+  int completeviz = 1;
+  int reducedviz = 2;
+  if (argc > 2)
+    completeviz = atoi(argv[2]); //TODO: unsafe
+  if (argc > 3)
+    reducedviz = atoi(argv[3]); //TODO: unsafe
+ 
+  int* arr = new int[SIZE];
+  //making some boring test data
+  for (int i=0; i<SIZE; ++i) {
+    arr[i] = i;
+  }
+  
+  printf("Maximum Obtainable Value is %dn", cutRod(arr, SIZE));
+  
+  depgraph::listall();
+  
+  depgraph::visualize(completeviz, true);
+  depgraph::visualize(reducedviz, false);
 
-    return 0;
+  delete[] arr;
+  
+  return 0;
 }
 
