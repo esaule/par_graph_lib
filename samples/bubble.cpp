@@ -7,7 +7,7 @@ void bubblesort(int* A, int n) {
     for (int j=1; j<n; ++j) {
 
       {	std::stringstream ss; ss<<"("<<i<<","<<j<<")"; depgraph::newtask (ss.str()); }
-            
+      depgraph::hintlocation(i,j);
 
       //The accesses to A[j] and A[j-1] are declared out of the test
       //because it may or may not happen depending on the array.
