@@ -51,8 +51,8 @@ int main (int argc, char* argv[]) {
 
   depgraph::listall();
 
-  depgraph::visualize(completeviz, true, "Bubble Sort", "with transitive");
-  depgraph::visualize(reducedviz, false, "Bubble Sort", "without transitive");
+  depgraph::visualize(completeviz, true, true, "Bubble Sort", "with transitive");
+  depgraph::visualize(reducedviz, false, true, "Bubble Sort", "without transitive");
 
   delete[] arr;
   

@@ -73,8 +73,8 @@ int main (int argc, char* argv[]) {
 
   depgraph::listall();
 
-  depgraph::visualize(completeviz, true, "Longest Common Subsequence", "with transitive");
-  depgraph::visualize(reducedviz, false, "Longest Common Subsequence", "without transitive");
+  depgraph::visualize(completeviz, true, true, "Longest Common Subsequence", "with transitive");
+  depgraph::visualize(reducedviz, false, true, "Longest Common Subsequence", "without transitive");
 
   delete[] arr1;
   delete[] arr2;
