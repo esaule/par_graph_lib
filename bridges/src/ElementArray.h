@@ -4,6 +4,11 @@
 #include "Element.h"
 namespace bridges{
 
+/**
+ *  @brief  Currently unused class, ignore
+ *
+ */
+
 template <typename E, size_t X, size_t Y = 1, size_t Z = 1>
 class ElementArray : public DataStructure
 {

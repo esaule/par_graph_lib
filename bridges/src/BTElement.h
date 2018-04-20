@@ -48,7 +48,7 @@ class BTElement : public TreeElement<E> {
 
 		/** 
 		 *	@return the data structure type
-		*/
+		 */
 
 		virtual const string getDStype() const override {
 			return "BinaryTree";
