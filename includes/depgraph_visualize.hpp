@@ -51,12 +51,11 @@ namespace depgraph {
 
   std::vector< std::list<int> > simplified_graph;
 
-  //@param u task id
-  //@param v task id
-  //assume u < v
-  //returns true if u an v have a RAW, WAW, WAR dependency
+  ///@param u task id
+  ///@param v task id
+  ///assumes u < v
+  ///@returns true if u an v have a RAW, WAW, WAR dependency
   bool depends_on (int u, int v) {
-
     auto& s = tasklist[u];
     //all the variables access by it
     for (auto& va : accessmap[tasklist[v]]) {
@@ -72,7 +71,30 @@ namespace depgraph {
     }
 
     return false;
+  }
+
+  ///@param u task id
+  ///@param v task id
+  ///assumes u < v
+  ///@return string of all variable that cause a dependency from u to v
+  std::string why_depends_on(int u, int v) {
+    std::stringstream ss;
     
+    auto& s = tasklist[u];
+    //all the variables access by it
+    for (auto& va : accessmap[tasklist[v]]) {
+      auto varfind = std::find_if(accessmap[s].begin(), accessmap[s].end(), [&] (const variableaccess& v) { return v.var == va.var;});
+      if (varfind != accessmap[s].end() ) {
+	//NOT THE REAL CONDITION
+	if (va.ac !=variableaccess::access::READ ||
+	    varfind->ac !=variableaccess::access::READ) {
+	  ss<<va.var<<" ";
+	  //g.addEdge(*it, s, 1);
+	}
+      }
+    }
+
+    return ss.str();
   }
   
   void build_graph() {
@@ -217,6 +239,8 @@ namespace depgraph {
     for (int u=0; u<tasklist.size(); ++u) {
       for (auto v : (use_simple?basic_graph:simplified_graph)[u]) {
 	g.addEdge(tasklist[u], tasklist[v], 1);
+	auto link_viz_p = g.getLinkVisualizer(tasklist[u], tasklist[v]);
+	link_viz_p -> setLabel(why_depends_on(u,v));
       }
     }
 
