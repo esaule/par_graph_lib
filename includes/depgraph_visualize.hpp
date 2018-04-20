@@ -234,6 +234,12 @@ namespace depgraph {
 
     for (int u=0; u<tasklist.size(); ++u) {
       g.addVertex(tasklist[u], 0);
+
+      auto lh = hints.find(tasklist[u]);
+      if (lh != hints.end()) {
+	auto elem_viz_p = g.getVertex(tasklist[u])->getVisualizer();
+	elem_viz_p -> setLocation(lh->second.i*100., lh->second.j*100.);
+      }
     }
     
     for (int u=0; u<tasklist.size(); ++u) {

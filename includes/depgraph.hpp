@@ -27,12 +27,18 @@ namespace depgraph {
       return (this->ac < va.ac);
     }
   };
+
+  struct loc_hint {
+    int i, j;
+  };
   
   std::vector<std::string> tasklist;
 
   std::vector<int> processing_time;
   
   std::map<std::string, std::set<variableaccess> > accessmap;
+  
+  std::map<std::string, loc_hint > hints;
   
   ///declares a new task with a given name
   ///@param name name of the task
@@ -49,8 +55,19 @@ namespace depgraph {
     newtask(ss.str());
   }
 
+  ///declares a processing time for the current task
   void setprocessingtime(int pi) {
     processing_time[processing_time.size()-1] = pi;
+  }
+
+
+  ///hints to the display that the current task should be at position
+  ///(i,j)
+  void hintlocation(int i, int j = 0) {
+    loc_hint lh;
+    lh.i=i;
+    lh.j=j;
+    hints[*(tasklist.end()-1)] = lh;
   }
 
   ///declares that the current task reads the given variable

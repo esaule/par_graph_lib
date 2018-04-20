@@ -10,12 +10,14 @@ int LCSLength(char* X, int m, char* Y, int n) {
   
   for (int i=0; i <= m; ++i) {
     { std::stringstream ss; ss<<"("<<i<<","<<0<<")"; depgraph::newtask (ss.str()); }
+    depgraph::hintlocation(i, 0);
     { std::stringstream ss; ss<<"C["<<i<<"]["<<0<<"]"; depgraph::write (ss.str()); }
     
     C[i][0] = 0;
   }
   for (int j=0; j <= n; ++j) {
     { std::stringstream ss; ss<<"("<<0<<","<<j<<")"; depgraph::newtask (ss.str()); }
+    depgraph::hintlocation(0, j);
     { std::stringstream ss; ss<<"C["<<0<<"]["<<j<<"]"; depgraph::write (ss.str()); }
     
     C[0][j] = 0;
@@ -23,6 +25,7 @@ int LCSLength(char* X, int m, char* Y, int n) {
   for (int a=1; a <= m; ++a) {
     for (int b=1; b <= n; ++b){
       { std::stringstream ss; ss<<"("<<a<<","<<b<<")"; depgraph::newtask (ss.str()); }
+    depgraph::hintlocation(a, b);
       { std::stringstream ss; ss<<"X["<<a-1<<"]"; depgraph::read (ss.str()); }
       { std::stringstream ss; ss<<"Y["<<b-1<<"]"; depgraph::read (ss.str()); }
       { std::stringstream ss; ss<<"C["<<a<<"]["<<b<<"]"; depgraph::write (ss.str()); }
