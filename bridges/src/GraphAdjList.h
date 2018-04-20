@@ -199,7 +199,7 @@ namespace bridges {
 			 */
 			ElementVisualizer *getVisualizer (const K& k) {
 				try {
-					Element<K> *el = vertices.at(k);
+					Element<E> *el = vertices.at(k);
 
 					return el->getVisualizer();
 				}
@@ -219,8 +219,8 @@ namespace bridges {
 			 */
 			LinkVisualizer *getLinkVisualizer (const K& k1, const K& k2) {
 				try {
-					Element<K> *el1 = vertices.at(k1);
-					Element<K> *el2 = vertices.at(k2);
+					Element<E> *el1 = vertices.at(k1);
+					Element<E> *el2 = vertices.at(k2);
 
 					return el1->getLinkVisualizer(el2);
 				}
