@@ -147,7 +147,7 @@ namespace bridges {
 			/**
 			 *	@return the requested vertex of this graph
 			 */
-			const Element<K>* getVertex(const K& key) const {
+			const Element<E>* getVertex(const K& key) const {
 				return vertices.at(key);
 			}
 
@@ -157,7 +157,7 @@ namespace bridges {
 			 *
 			 *  non-const version
 			 */
-			Element<K>* getVertex(const K& key) {
+			Element<E>* getVertex(const K& key) {
 				return vertices.at(key);
 			}
 
