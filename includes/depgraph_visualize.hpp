@@ -212,7 +212,10 @@ namespace depgraph {
 
   void visualize(int channel,
 		 bool use_simple = false,
-		 bool highlightCP = true) {
+		 bool highlightCP = true,
+		 std::string title = "",
+		 std::string description = ""
+		 ) {
 
     auto start = std::chrono::system_clock::now();
 
@@ -222,6 +225,9 @@ namespace depgraph {
     get_bridges_account(bridges_user, bridges_apikey);
     
     bridges::Bridges::initialize(channel, bridges_user, bridges_apikey);
+
+    bridges::Bridges::setTitle(title);
+    bridges::Bridges::setDescription(description);
 
     if (basic_graph.size() == 0) //if not built
       build_graph();
