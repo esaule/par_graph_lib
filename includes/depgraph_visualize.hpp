@@ -51,25 +51,40 @@ namespace depgraph {
 
   std::vector< std::list<int> > simplified_graph;
 
+  //@param u task id
+  //@param v task id
+  //assume u < v
+  //returns true if u an v have a RAW, WAW, WAR dependency
+  bool depends_on (int u, int v) {
+
+    auto& s = tasklist[u];
+    //all the variables access by it
+    for (auto& va : accessmap[tasklist[v]]) {
+      auto varfind = std::find_if(accessmap[s].begin(), accessmap[s].end(), [&] (const variableaccess& v) { return v.var == va.var;});
+      if (varfind != accessmap[s].end() ) {
+	//NOT THE REAL CONDITION
+	if (va.ac !=variableaccess::access::READ ||
+	    varfind->ac !=variableaccess::access::READ) {
+	  return true;
+	  //g.addEdge(*it, s, 1);
+	}
+      }
+    }
+
+    return false;
+    
+  }
+  
   void build_graph() {
     basic_graph.resize(tasklist.size());
     
     for (int u=0; u<basic_graph.size(); ++u) {
-      auto& s = tasklist[u];
+    
       //"it" is before "s"
       for (int v = 0; v< u; ++v) {
-	//all the variables access by it
-	for (auto& va : accessmap[tasklist[v]]) {
-	  auto varfind = std::find_if(accessmap[s].begin(), accessmap[s].end(), [&] (const variableaccess& v) { return v.var == va.var;});
-	  if (varfind != accessmap[s].end() ) {
-	    //NOT THE REAL CONDITION
-	    if (va.ac !=variableaccess::access::READ ||
-		varfind->ac !=variableaccess::access::READ) {
-	      basic_graph[v].push_back(u);
-	      //g.addEdge(*it, s, 1);
-	    }
-	  }
-	}
+
+	if (depends_on (u,v))
+	  basic_graph[v].push_back(u);
       }
     }
   }
@@ -121,13 +136,13 @@ namespace depgraph {
       //x is on the critical path      
 
       //color x in red
-      auto vert_x_p = g.getVertices().find(tasklist[x])->second;
+      auto vert_x_p = g.getVertices()->find(tasklist[x])->second;
       auto vert_viz_p = vert_x_p->getVisualizer();
       vert_viz_p->setColor(bridges::Color(255,0,0));
       
       //color the edge
       if (x != prev) {
-	auto vert_prev_p = g.getVertices().find(tasklist[prev])->second;
+	auto vert_prev_p = g.getVertices()->find(tasklist[prev])->second;
 	auto link_viz_p = vert_x_p->getLinkVisualizer(vert_prev_p);
 	link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS * 10.);
 	link_viz_p->setColor(bridges::Color(255,0,0));
