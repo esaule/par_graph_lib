@@ -17,13 +17,15 @@ void matvec() {
   for (int i=0; i<N; ++i) {
     { std::stringstream ss; ss<<"matvec_"<<i<<"-pre"; depgraph::newtask (ss.str()); }
     { std::stringstream ss; ss<<"y["<<i<<"]"; depgraph::write (ss.str()); }
+    depgraph::hintlocation(i, -1);
 
 
     y[i] = 0.;
 
     for (int j=0; j<N; ++j) {
       { std::stringstream ss; ss<<"matvec_"<<i<<"_"<<j; depgraph::newtask (ss.str()); }
-      
+      depgraph::hintlocation(i, j);
+    
       { std::stringstream ss; ss<<"A["<<i<<"]["<<j<<"]"; depgraph::read (ss.str()); }
       { std::stringstream ss; ss<<"x["<<j<<"]"; depgraph::read (ss.str()); }
       { std::stringstream ss; ss<<"y["<<i<<"]"; depgraph::readwrite (ss.str()); }
