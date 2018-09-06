@@ -32,6 +32,7 @@ int main (int argc, char* argv[]) {
 
   if (argc < 2) {
     std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]";
+    return -1;
   }
   
   int SIZE = atoi(argv[1]); //TODO: unsafe
