@@ -9,6 +9,8 @@
 #include <sys/types.h>
 #include <pwd.h>
 
+#include <depgraph_debug.hpp>
+
 namespace depgraph {
 
   //s is the graphs to remove transitive edges from
@@ -214,7 +216,9 @@ namespace depgraph {
 		 bool use_simple = false,
 		 bool highlightCP = true,
 		 std::string title = "",
-		 std::string description = ""
+		 std::string description = "",
+		 bool noedges=false,
+		 bool printaccess=false
 		 ) {
 
     auto start = std::chrono::system_clock::now();
@@ -244,18 +248,27 @@ namespace depgraph {
       auto lh = hints.find(tasklist[u]);
       if (lh != hints.end()) {
 	auto elem_viz_p = g.getVertex(tasklist[u])->getVisualizer();
-	elem_viz_p -> setLocation(lh->second.i*100., lh->second.j*100.);
+	elem_viz_p -> setLocation(lh->second.i*130., lh->second.j*130.);
+	
       }
+      if (printaccess) 
+	g.getVertex(tasklist[u])->setLabel(tasklist[u]+"\\n"+varAccessOfTask(tasklist[u]));
     }
-    
+
+    if (!noedges)
     for (int u=0; u<tasklist.size(); ++u) {
       for (auto v : (use_simple?basic_graph:simplified_graph)[u]) {
 	g.addEdge(tasklist[u], tasklist[v], 1);
 	auto link_viz_p = g.getLinkVisualizer(tasklist[u], tasklist[v]);
 	link_viz_p -> setLabel(why_depends_on(u,v));
+	//we are on a scaled version. need bigger arrows
+	if (hints.find(tasklist[u]) != hints.end()) {
+	link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS * 3.);
+	}
       }
     }
 
+    if (!noedges)
     if (highlightCP)
       highlight_criticalpath();
         

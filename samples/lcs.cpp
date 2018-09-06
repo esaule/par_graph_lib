@@ -15,7 +15,7 @@ int LCSLength(char* X, int m, char* Y, int n) {
     
     C[i][0] = 0;
   }
-  for (int j=0; j <= n; ++j) {
+  for (int j=1; j <= n; ++j) {
     { std::stringstream ss; ss<<"("<<0<<","<<j<<")"; depgraph::newtask (ss.str()); }
     depgraph::hintlocation(0, j);
     { std::stringstream ss; ss<<"C["<<0<<"]["<<j<<"]"; depgraph::write (ss.str()); }
@@ -50,16 +50,26 @@ int main (int argc, char* argv[]) {
   char* arr2;
 
   if (argc < 2) {
-    std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]";
+    std::cerr<<"Usage: "<<argv[0]<<" N [taskvizid] [accvizid] [completevizid] [reducevizid] [cpvizid]"<<std::endl;
+    return -1;
   }
   
   int SIZE = atoi(argv[1]); //TODO: unsafe
-  int completeviz = 1;
-  int reducedviz = 2;
+  int taskviz = 1;
+  int accessviz = 2;
+  int completeviz = 3;
+  int reducedviz = 4;
+  int cpviz = 5;
   if (argc > 2)
-    completeviz = atoi(argv[2]); //TODO: unsafe
+    taskviz = atoi(argv[2]); //TODO: unsafe
   if (argc > 3)
-    reducedviz = atoi(argv[3]); //TODO: unsafe
+    accessviz = atoi(argv[3]); //TODO: unsafe
+  if (argc > 4)
+    completeviz = atoi(argv[4]); //TODO: unsafe
+  if (argc > 5)
+    reducedviz = atoi(argv[5]); //TODO: unsafe
+  if (argc > 6)
+    cpviz = atoi(argv[6]); //TODO: unsafe
 
   arr1 = new char[SIZE];
   arr2 = new char[SIZE];
@@ -73,8 +83,11 @@ int main (int argc, char* argv[]) {
 
   depgraph::listall();
 
-  depgraph::visualize(completeviz, true, true, "Longest Common Subsequence", "with transitive");
-  depgraph::visualize(reducedviz, false, true, "Longest Common Subsequence", "without transitive");
+  depgraph::visualize(taskviz, true, true, "Longest Common Subsequence", "Just tasks", true, false);
+  depgraph::visualize(accessviz, true, true, "Longest Common Subsequence", "Tasks and access", true, true);
+  depgraph::visualize(completeviz, true, false, "Longest Common Subsequence", "with transitive", false, false);
+  depgraph::visualize(reducedviz, false, false, "Longest Common Subsequence", "without transitive", false, false);
+  depgraph::visualize(cpviz, false, true, "Longest Common Subsequence", "without transitive", false, false);
 
   delete[] arr1;
   delete[] arr2;
