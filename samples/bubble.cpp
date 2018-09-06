@@ -31,7 +31,7 @@ int main (int argc, char* argv[]) {
   int* arr;
 
   if (argc < 2) {
-    std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]";
+    std::cerr<<"Usage: "<<argv[0]<<" N [vizid1] [vizid2]"<<std::endl;
     return -1;
   }
   
