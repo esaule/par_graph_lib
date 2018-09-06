@@ -2,35 +2,35 @@
 
 namespace bridges {
 
-/**
- * 	@brief This class can be used to instantiate Multi-list Elements.
+	/**
+	 * 	@brief This class can be used to instantiate Multi-list Elements.
 
- * 	This class extends SLelement (singly linked list element) to build multi-lists;
- *	Multilist elements contain a tag that indicates if the element is a sublist or not;
- *	If the element points to a sublist, then the sublist field is the beginning of
- *	this sublist. If not, the data field contains the user specified data item and
- *	list continues (getNext()/setNex()). As in singly linked elements, the next pointer
- *	points to the following list element of the list or sublist.
- *
- * 	Multi-list elements contain a visualizer (ElementVisualizer) object for setting
- *	visual attributes (color, shape, opacity, size), necessary for displaying
- *	them in a web browser.
- *
- *	Elements also have a LinkVisualizer object, that is used when they are linked to
- *	another element, appropriate for setting link attributes, for instance, between
- *	the current element and its next element. In this case, the link in question is that
- *  which connects the element to the following elements; a similar logic follows for
- *	sublists.
- *
- * @author , Kalpathi Subramanian
- *
- * @date 5/24/17
- *
- * @param <E> The generic parameter object that is part of this element, representing
- *			either application specific data, or a pointer to a sublist.
- *
- *	\sa Example Tutorial at <br> ??
- */
+	 * 	This class extends SLelement (singly linked list element) to build multi-lists;
+	 *	Multilist elements contain a tag that indicates if the element is a sublist or not;
+	 *	If the element points to a sublist, then the sublist field is the beginning of
+	 *	this sublist. If not, the data field contains the user specified data item and
+	 *	list continues (getNext()/setNex()). As in singly linked elements, the next pointer
+	 *	points to the following list element of the list or sublist.
+	 *
+	 * 	Multi-list elements contain a visualizer (ElementVisualizer) object for setting
+	 *	visual attributes (color, shape, opacity, size), necessary for displaying
+	 *	them in a web browser.
+	 *
+	 *	Elements also have a LinkVisualizer object, that is used when they are linked to
+	 *	another element, appropriate for setting link attributes, for instance, between
+	 *	the current element and its next element. In this case, the link in question is that
+	 *  which connects the element to the following elements; a similar logic follows for
+	 *	sublists.
+	 *
+	 * @author , Kalpathi Subramanian
+	 *
+	 * @date 5/24/17
+	 *
+	 * @param <E> The generic parameter object that is part of this element, representing
+	 *			either application specific data, or a pointer to a sublist.
+	 *
+	 *	\sa Example Tutorial at <br> ??
+	 */
 
 
 	template <typename E>

@@ -22,7 +22,7 @@ namespace bridges {
 	 */
 	template <typename K, typename E>
 	class BSTElement : public BinTreeElement<E> {
-		private:
+		protected:
 			K key = K();// The search key value
 		public:
 			/**

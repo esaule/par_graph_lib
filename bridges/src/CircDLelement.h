@@ -4,29 +4,29 @@
 #include "DLelement.h"
 
 namespace bridges {
-/**
- * @author Kalpathi Subramanian
- * @date  10/5/16
- *
- *  @brief This class can be used to instantiate Circular Doubly Linked
- *  List Elements.
+	/**
+	 * @author Kalpathi Subramanian
+	 * @date  10/5/16
+	 *
+	 *  @brief This class can be used to instantiate Circular Doubly Linked
+	 *  List Elements.
 
- *  Structurally they are the same as doubly linked elements
- *  except that each node constructed with the next and the previous pointers
- *  pointing to itself.
+	 *  Structurally they are the same as doubly linked elements
+	 *  except that each node constructed with the next and the previous pointers
+	 *  pointing to itself.
 
- *  User's implementation of the circularly linked list needs to ensure that
- *  the last node's next pointer points to the first node and the first node's
- *  previous pointer points to the last node, as the visualization generation
- *  is dependent on this.
+	 *  User's implementation of the circularly linked list needs to ensure that
+	 *  the last node's next pointer points to the first node and the first node's
+	 *  previous pointer points to the last node, as the visualization generation
+	 *  is dependent on this.
 
- *  Elements have labels (string) that are displayed on the visualization.
- *  Elements take an generic object E as a user defined parameter, which can
- *  any native type or object.
- *  Elements contain a visualizer object for setting visual attributes (color,
- *  shape, opacity, size), necessary for displaying them in a web browser
- *
- */
+	 *  Elements have labels (string) that are displayed on the visualization.
+	 *  Elements take an generic object E as a user defined parameter, which can
+	 *  any native type or object.
+	 *  Elements contain a visualizer object for setting visual attributes (color,
+	 *  shape, opacity, size), necessary for displaying them in a web browser
+	 *
+	 */
 	template <typename E>
 	class CircDLelement : public  DLelement<E> {
 		public:
@@ -96,12 +96,12 @@ namespace bridges {
 			}
 
 			/**
-             * Retrieves the next CircSLelement
-             * @return CircSLelement<E> assigned to next
-             */
-            virtual CircDLelement<E> *getNext() override {
-                return static_cast<CircDLelement*> (SLelement<E>::getNext());
-            }
+			 * Retrieves the next CircSLelement
+			 * @return CircSLelement<E> assigned to next
+			 */
+			virtual CircDLelement<E> *getNext() override {
+				return static_cast<CircDLelement*> (SLelement<E>::getNext());
+			}
 
 			/**
 			 * This method sets the pointer to the next DLelement

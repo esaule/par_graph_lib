@@ -7,6 +7,9 @@
 #include <unordered_map> //unordered_map
 #include <cmath> //log
 
+#include <sstream>
+#include <iomanip>
+
 #include "DataStructure.h" //string, using std
 
 namespace bridges {
@@ -46,6 +49,16 @@ namespace bridges {
 			// The rgba channel values of this Color
 			array<int, 4> channels{{255, 255, 255, 255}};
 		public:
+			/**
+			 *  Default constructor
+			 *  Defaults to black
+			 */
+			Color() {
+				setRed(0);
+				setGreen(0);
+				setBlue(0);
+				setAlpha(255);
+			}
 			/**
 			 * Constructs a color with the specified rgba color channel values [0,255].
 			 * If no alpha channel is provided, the default of 255(opaque) is used.
@@ -110,28 +123,29 @@ namespace bridges {
 
 			/** @return The #hexadecimal representation (#RRGGBBAA) of this color */
 			string getHexValue() const {
-				const string HEX = to_hex(getRed() * 16777216 + getGreen() * 65536
-						+ getBlue() * 256 + getAlpha());
-				string prefix = "#";
-				for (auto i = HEX.size(); i < 8; i++) {
-					prefix += "0";
-				}
-				return prefix + HEX;
+				std::stringstream ss;
+				ss << "#";
+				ss << std::hex << std::setfill('0') << std::setw(2) << getRed();
+				ss << std::hex << std::setfill('0') << std::setw(2) << getGreen();
+				ss << std::hex << std::setfill('0') << std::setw(2) << getBlue();
+				ss << std::hex << std::setfill('0') << std::setw(2) << getAlpha();
+
+				return ss.str();
 			}
 			/** Sets red channel to "r" @param a rgba value to set red channel to  */
-			void setRed(const int& r) {
+			void setRed(int r) {
 				setChannel(r, 0);
 			}
 			/** Sets green channel to "g" @param a rgba value to set green channel to */
-			void setGreen(const int& g) {
+			void setGreen(int g) {
 				setChannel(g, 1);
 			}
 			/** Sets blue channel to "b" @param a rgba value to set blue channel to */
-			void setBlue(const int& b) {
+			void setBlue(int b) {
 				setChannel(b, 2);
 			}
 			/** Sets alpha channel to "a" @param a rgba value to set alpha channel to */
-			void setAlpha(const int& a) {
+			void setAlpha(int a) {
 				setChannel(a, 3);
 			}
 
@@ -144,7 +158,7 @@ namespace bridges {
 			 * @param b rgba value to set the blue channel to
 			 * @param a rgba value to set the alpha channel to
 			 */
-			void setValue(const int& r, const int& g, const int& b, const int& a = 255) {
+			void setValue(int r, int g, int b, int a = 255) {
 				setRed(r);
 				setGreen(g);
 				setBlue(b);
@@ -160,7 +174,7 @@ namespace bridges {
 			 */
 			void setValue(string name) {
 				for (char& c : name) {
-					c = tolower(c);   //convert to lowercase
+					c = (char) tolower((unsigned char)c);   //convert to lowercase
 				}
 				auto it = ColorNames.find(name);
 
@@ -177,7 +191,7 @@ namespace bridges {
 					const int chanMultiplier = (chanChars == 1) ? 17 : 1;
 					for (size_t i = 0; i < name.size() / chanChars; i++) {
 						//converts and save hex val to rgba val
-						channels.at(i) = strtol(name.substr(i * chanChars,
+						channels.at(i) = (int) strtol(name.substr(i * chanChars,
 									chanChars).c_str(), nullptr, 16) * chanMultiplier;
 					}
 				}
@@ -203,20 +217,6 @@ namespace bridges {
 				? throw "Invalid channel parameter: " + to_string(value) +
 				" Must be in the [0,255] range"
 				: channels.at(channel) = value;
-			}
-			/**
-			 * Converts decimal value to appropriate hexidecimal value
-			 *
-			 * @param val The value to convert
-			 * @return The hexadecimal value of "val"
-			 */
-			static string to_hex(const unsigned long& val) {
-				//number of characters needed - includes terminating character
-				char* buffer = new char[static_cast<int>((log(val) / log(16)) + 2)];
-				sprintf(buffer, "%x", static_cast<int>(val));
-				string hexValue = string(buffer);
-				delete[] buffer; //used new[] to have variable array size
-				return hexValue;
 			}
 	};//end of color class
 

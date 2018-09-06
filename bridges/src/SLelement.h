@@ -145,7 +145,7 @@ namespace bridges {
 					nodes_JSON = nodes_JSON.erase(nodes_JSON.size() - 1);
 				}
 				// for each pair<SLelement*,int> in map
-				for (int k = 0; k < nodes.size(); k++) {
+				for (unsigned int k = 0; k < nodes.size(); k++) {
 					if (nodes[k]->next != nullptr) { // link exists
 						links_JSON += this->getLinkRepresentation(nodes[k]->links.at(nodes[k]->next),
 								to_string(node_map[nodes[k]]),

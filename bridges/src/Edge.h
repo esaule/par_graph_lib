@@ -8,26 +8,26 @@ using namespace std;
 
 namespace bridges {
 
-/**
- * @brief This helper class is used by the graph
- *  classes - GraphAdjList , GraphAdjMatrix -  to keep track of edge
- *  information
- *
- * This class is used to assign a visual connection between two Elements in the
- * Bridges Visualization.
- * <p>
- * Bridges will represent these as arrows between two
- * Elements. The starting Element of the arrow will be referred to as the source
- * Element and the ending Element of the arrow will be referred to as the
- * terminating Element.
- *
- * @author krs
- *
- * @param <E>
- */
+	/**
+	 * @brief This helper class is used by the graph
+	 *  classes - GraphAdjList , GraphAdjMatrix -  to keep track of edge
+	 *  information
+	 *
+	 * This class is used to assign a visual connection between two Elements in the
+	 * Bridges Visualization.
+	 * <p>
+	 * Bridges will represent these as arrows between two
+	 * Elements. The starting Element of the arrow will be referred to as the source
+	 * Element and the ending Element of the arrow will be referred to as the
+	 * terminating Element.
+	 *
+	 * @author krs
+	 *
+	 * @param <E>
+	 */
 
 
-	template <typename K>
+	template <typename K, typename E2 = K>
 	class Edge {
 		private:
 			// The weight of this edge
@@ -35,7 +35,7 @@ namespace bridges {
 			// The destination vertex of this edge */
 			K vertex = K();
 			// The application specific data of this edge */
-			string edge_data;
+			E2 edge_data = E2();
 
 		public:
 
@@ -48,7 +48,7 @@ namespace bridges {
 			 * @param v The terminating vertex
 			 * @param data The edge data
 			 */
-			Edge(const K& v, const int& wt = 1, const string& data = string()) :
+			Edge(const K& v, const int& wt = 1, const E2& data = E2()) :
 				weight(wt), vertex(v), edge_data(data) {
 			}
 
@@ -88,14 +88,20 @@ namespace bridges {
 			 * 	Sets edge data to "data"
 			 *	@param data Application data
 			 */
-			void setEdgeData(const string& data) {
+			void setEdgeData(const E2& data) {
 				edge_data = data;
 			}
 
 			/**
 			 *	@return The edge data
 			 */
-			string getEdgeData() const {
+			E2& getEdgeData() const {
+				return edge_data;
+			}
+			/**
+			 *	@return The edge data
+			 */
+			E2& getEdgeData() {
 				return edge_data;
 			}
 	}; //end of Edge class

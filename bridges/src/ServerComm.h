@@ -11,17 +11,20 @@ using namespace std;
 #include "./data_src/GutenbergBook.h"
 #include "./data_src/CancerIncidence.h"
 #include "./data_src/ActorMovieIMDB.h"
+#include "./data_src/Song.h"
 
 namespace bridges {
 	namespace DataSource {
 		vector<Game> getGameData();
-		vector<EarthquakeUSGS> getEarthquakeData(int);
+		vector<EarthquakeUSGS> getEarthquakeUSGSData(int);
 		vector<Shakespeare> getShakespeareData(string, bool);
 		vector<GutenbergBook> getGutenbergBookData(int);
 		vector<CancerIncidence> getCancerIncidenceData(int);
 		vector<ActorMovieIMDB> getActorMovieIMDBData(int);
-		vector<ActorMovieIMDB> getActorMovieIMDBData2(int);
-		
+		vector<ActorMovieIMDB> getActorMovieIMDBData2();
+		vector<Song> getSongData();
+		Song getSong(string, string);
+
 	}
 	/**
 	 *	@brief This is a detail class for the Bridges namespace and
@@ -31,12 +34,14 @@ namespace bridges {
 			//Used to access to this class private functions
 			friend void Bridges::visualize();
 			friend vector<Game> DataSource::getGameData();
-			friend vector<EarthquakeUSGS> DataSource::getEarthquakeData(int);
+			friend vector<EarthquakeUSGS> DataSource::getEarthquakeUSGSData(int);
 			friend vector<Shakespeare> DataSource::getShakespeareData(string, bool);
 			friend vector<GutenbergBook> DataSource::getGutenbergBookData(int);
 			friend vector<CancerIncidence> DataSource::getCancerIncidenceData(int);
 			friend vector<ActorMovieIMDB> DataSource::getActorMovieIMDBData(int);
-			friend vector<ActorMovieIMDB> DataSource::getActorMovieIMDBData2(int);
+			friend vector<ActorMovieIMDB> DataSource::getActorMovieIMDBData2();
+			friend vector<Song> DataSource::getSongData();
+			friend Song DataSource::getSong(string, string);
 
 			ServerComm() = delete; //Prevents instantiation
 
@@ -67,43 +72,75 @@ namespace bridges {
 				curl_global_init(CURL_GLOBAL_ALL);
 				CURL* curl = curl_easy_init(); // get a curl handle
 				if (curl) {
+					char error_buffer[CURL_ERROR_SIZE];
+					CURLcode res;
+					//setting verbose
+					if (0) {
+						res = curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+						if (res != CURLE_OK)
+							throw "curl_easy_setopt failed";
+					}
+					// setting error buffer
+					res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+					if (res != CURLE_OK)
+						throw "curl_easy_setopt failed";
+
 					// set the URL to GET from
-					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+					res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+					if (res != CURLE_OK)
+						throw "curl_easy_setopt failed";
 					//pass pointer to callback function
-					curl_easy_setopt(curl, CURLOPT_WRITEDATA, &results);
+					res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &results);
+					if (res != CURLE_OK)
+						throw "curl_easy_setopt failed";
 					//sends all data to this function
-					curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteFunction);
-									// need this to catch http errors
-					curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+					res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteFunction);
+					if (res != CURLE_OK)
+						throw "curl_easy_setopt failed";
+					// need this to catch http errors
+					res = curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+					if (res != CURLE_OK)
+						throw "curl_easy_setopt failed";
 					if (data.length() > 0) {
 						// Now specify the POST data
-						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+						res = curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+						if (res != CURLE_OK)
+							throw "curl_easy_setopt failed";
 						// Now specify the POST data size
-						curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length());
+						res = curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length());
+						if (res != CURLE_OK)
+							throw "curl_easy_setopt failed";
 						//  a post request
-						curl_easy_setopt(curl, CURLOPT_POST, true);
+						res = curl_easy_setopt(curl, CURLOPT_POST, 1L);
+						if (res != CURLE_OK)
+							throw "curl_easy_setopt failed";
 					}
 
 					struct curl_slist* curlHeaders = nullptr;
 					for (const string& header : headers) {
 						curlHeaders = curl_slist_append(curlHeaders, header.c_str());
 					}
-					curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
+					res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
+					if (res != CURLE_OK)
+						throw "curl_easy_setopt failed";
 
 					// Perform the request, res will get the return code
-					CURLcode res = curl_easy_perform(curl);
+					res = curl_easy_perform(curl);
 
 					if (res != CURLE_OK) {
 						throw "curl_easy_perform() failed.\nCurl Error Code "
-						+ to_string(res) + "\n" + curl_easy_strerror(res) + 
-						"\n" + "Possibly Bad BRIDGES Credentials\n";
+						+ to_string(res) + "\n" + curl_easy_strerror(res) +
+						"\n"
+						+ error_buffer + "\nPossibly Bad BRIDGES Credentials\n";
 					}
+					curl_slist_free_all(curlHeaders);
 					curl_easy_cleanup(curl);
 				}
 				else {
 					throw "curl_easy_init() failed!\nNothing retrieved from server.\n";
 				}
 
+				curl_global_cleanup();
 				return results;
 			}
 	}; //server comm

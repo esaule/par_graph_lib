@@ -6,7 +6,7 @@
 
 namespace bridges {
 	/** Enumeration of valid shapes for visualization */
-	enum Shape {CIRCLE, SQUARE, DIAMOND, CROSS, TRI_DOWN, TRI_UP};
+	enum Shape {CIRCLE, SQUARE, DIAMOND, CROSS, TRIANGLE, STAR, WYE};
 	/**
 	 * @brief This class maintains the visual properties of the  a Bridges element
 	 *
@@ -14,7 +14,7 @@ namespace bridges {
 	 * Visualiztions, including the color, shape, and size of the node.
 	 * Defaults of green, circle, and 10.0 respectively.
 	 *
-	 * Size values must range from [10.0,50.0].
+	 * Size values must range from [1.0,50.0].
 	 * BRIDGES supports the following shapes: "circle", "square", "diamond",
 	 *  "cross", "triangle-down", "triangle-up"
 	 *
@@ -48,15 +48,15 @@ namespace bridges {
 				: color(hue), size(sz), shape(shp) {}
 			/**
 			 * Sets size to "sz"
-			 * Valid Range:[10,50]
+			 * Valid Range:[1,50]
 			 *
 			 * @param size The size in pixel weight of the element
 			 * @throw string If size is invalid
 			 */
 			void setSize(const double& sz) {
-				(sz < 10 || 50 < sz)
+				(sz < 1 || 50 < sz)
 				? throw "Invalid Size Value.. " + to_string(sz) +
-				" Must be in the [10.0,50.0] range"
+				" Must be in the [1.0,50.0] range"
 				: size = sz;
 			}
 			/** @return The size in pixel weight of the element*/
@@ -84,7 +84,7 @@ namespace bridges {
 			 */
 			void setOpacity(double opacity) {
 				if (opacity >= 0.0 && opacity <= 1.0)
-					color.setAlpha(opacity * 255.);
+					color.setAlpha( (int) (opacity * 255.));
 			}
 
 			/**
@@ -111,7 +111,7 @@ namespace bridges {
 				return shape;
 			}
 			/**
-			 * Set the location attributes of an element
+			 * Set the location attributes of an element. Set location to INFINITY for bridges to chose the location.
 			 *
 			 * @param locX X coordinate of the element location
 			 * @param locY Y coordinate of the element location

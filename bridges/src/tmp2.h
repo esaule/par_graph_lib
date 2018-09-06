@@ -4,27 +4,27 @@
 #include "SLelement.h"
 
 namespace bridges {
-	/**
-	 *  @brief This class can be used to instantiate Singly Linked
-	 *  Circular List Elements.
+/**
+ *  @brief This class can be used to instantiate Singly Linked
+ *  Circular List Elements.
 
-	 * 	This class can be used to instantiate Circular (Singly) Linked
-	 *	List Elements, derived from Singly Linked Element. The main difference
-	 *	from the SLelement is that they create circularly linked elements and
-	 *  their traversals are slightly different.
-	 *
-	 * 	Elements have labels (string) that are displayed on the visualization
-	 *  Elements take an generic object as a user defined parameter, any native
-	 *	type or object.
-	 *
-	 * 	Element contains a visualizer object for setting visual attributes (color,
-	 *	shape, opacity, size), necessary for displaying them in a web browser
-	 *
-	 *	@author Kalpathi Subramanian
-	 *	@date 10/5/2016
-	 *
-	 *	@param <E>
-	 */
+ * 	This class can be used to instantiate Circular (Singly) Linked
+ *	List Elements, derived from Singly Linked Element. The main difference
+ *	from the SLelement is that they create circularly linked elements and
+ *  their traversals are slightly different.
+ *
+ * 	Elements have labels (string) that are displayed on the visualization
+ *  Elements take an generic object as a user defined parameter, any native
+ *	type or object.
+ *
+ * 	Element contains a visualizer object for setting visual attributes (color,
+ *	shape, opacity, size), necessary for displaying them in a web browser
+ *
+ *	@author Kalpathi Subramanian
+ *	@date 10/5/2016
+ *
+ *	@param <E>
+ */
 
 
 	template <typename E>
@@ -47,8 +47,8 @@ namespace bridges {
 			 *		the Bridges visualization
 			 * 	@param e the generic object that this CircSLelement will hold
 			 */
-			CircSLelement (E val = E(), string label = string())
-				: SLelement<E> (this, val, label) {
+			CircSLelement (E val = E(), string label = string()) 
+						: SLelement<E> (this, val, label) {
 			}
 
 			/**
@@ -59,8 +59,8 @@ namespace bridges {
 			 * @param next the CircSLelement that should be assigned to the next
 			 * 		pointer
 			 */
-			CircSLelement (E e = E(), CircSLelement *next = nullptr)
-				: SLelement<E> (next, e) {
+			CircSLelement (E e = E(), CircSLelement *next = nullptr) 
+								: SLelement<E> (next, e) {
 			}
 
 			/**

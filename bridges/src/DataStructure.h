@@ -31,8 +31,8 @@
  *  BRIDGES is an NSF TUES Project.
  *
  *  \section contacts_sec Contacts:
- *  Kalpathi Subramanian, krs@uncc.edu, Jamie Payton, payton@uncc.edu,
- *  Michael Youngblood, gmyoungblood@gmail.com, Robert Kosara, rkosara@tableau.com
+ *  Kalpathi Subramanian, krs@uncc.edu, Jamie Payton, payton@temple.edu,
+ *  Michael Youngblood, gmyoungblood@gmail.com, Erik Saule, esaule@uncc.edu
 
  *  Department of Computer Science, The University of North Carolina at Charlotte,
  *  Charlotte, NC.
@@ -75,7 +75,7 @@ namespace bridges {
 	 */
 	class DataStructure {
 			// Used for access to getDataStructureRepresentation()
-		friend void Bridges::visualize();
+			friend void Bridges::visualize();
 
 		public:
 			/**

@@ -16,7 +16,7 @@ namespace bridges {
 	 *
 	 * BRIDGES supports color of any legal named CSS or #hexadecimal value. Defalt:
 	 *  opaque black
-	 * Thickness values must range from [0.0,10.0]. Default: 1.0
+	 * Thickness values must range from [1.0,10.0]. Default: 1.0
 	 *
 	 * @author Kalpathi Subramanian, Dakota Carmer
 	 * @date 6/29/15, 6/10/16
@@ -61,21 +61,21 @@ namespace bridges {
 			 *
 			 * @param lab The label of the element
 			 */
-			 void setLabel(const string& lab) {
-				 label = lab;
+			void setLabel(const string& lab) {
+				label = lab;
 			}
 
 			/**
 			 * Set the thickness to "thick"
-			 * Valid Range:[0,10] Default: 1
+			 * Valid Range:[1,10] Default: 1
 			 *
 			 * @param thick The size in pixels of the link's line weight
 			 * @throw string If invalid thickness
 			 */
 			void setThickness(const double& th) {
-				if (th < 0 || 10 < th)
+				if (th < 1 || 10 < th)
 					throw "Invalid Thickness Value.. " + to_string(th) +
-					" Must be in the [0.0,10.0] range";
+					" Must be in the [1.0,10.0] range";
 				else
 					thickness = th;
 			}

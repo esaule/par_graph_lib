@@ -25,7 +25,7 @@ namespace bridges {
 		static int *dims = nullptr;
 		static DataStructure* ds_handle = nullptr;  // data structure handle
 		static string server_url = "http://bridges-cs.herokuapp.com";
-		// map overlay options
+							// map overlay options
 		static string map_overlay_options[] = {"cartesian", "albersusa", "equirectangular"};
 		static bool map_overlay = false;
 		static string coord_system_type = "cartesian";
@@ -163,7 +163,7 @@ namespace bridges {
 				server_url = "http://bridges-cs.herokuapp.com";
 			else if (server_type == "clone")
 				server_url = "http://bridges-clone.herokuapp.com";
-			else if (server_type == "local")
+			else if (server_type == "local") 
 				server_url = "http://127.0.0.1:3000";
 		}
 
@@ -182,18 +182,18 @@ namespace bridges {
 		 *  Sets the coordinate system type for location specific datasets; default is cartesian
 		 *
 		 *	@param coord    this is the desired coordinate space argument
-		 *		Options are: ['cartesian', 'albersusa', 'equirectangular']. 'cartesian'
+		 *		Options are: ['cartesian', 'albersusa', 'equirectangular']. 'cartesian' 
 		 *		is the default
 		 *
 		 **/
 		void setCoordSystemType (string coord) {
 			std::transform(coord.begin(), coord.end(), coord.begin(), ::tolower);
-			if (coord == "cartesian" || coord == "albersusa" || coord == "equirectangular")
+			if (coord == "cartesian" ||coord == "albersusa" || coord == "equirectangular")
 				coord_system_type = coord;
 			else  {
-				cout << "Unrecognized coordinate system \'" + coord + "\', defaulting to "
+				cout << "Unrecognized coordinate system \'" + coord + "\', defaulting to " 
 					<< "cartesian. Options:";
-				for (auto proj : map_overlay_options)
+				for (auto proj : map_overlay_options) 
 					cout <<  + "\t" ;
 				coord_system_type = "cartesian";
 			}
@@ -201,8 +201,8 @@ namespace bridges {
 		/**
 		 *  Gets the coordinate system type for location specific datasets
 		 *
-		 *	@return coord system type ; will be one of
-		 *	['cartesian', 'albersUsa', 'equirectangular']. 'cartesian'
+		 *	@return coord system type ; will be one of   
+		 *	['cartesian', 'albersUsa', 'equirectangular']. 'cartesian' 
 		 *
 		 **/
 		string  getCoordSystemType () {
@@ -254,10 +254,10 @@ namespace bridges {
 					CLOSE_BOX + COMMA;
 			}
 			else if (ds_type == "ColorGrid") {
-				// get dimensions
+						// get dimensions
 				ds_json += QUOTE + "dimensions" + QUOTE + COLON +
 					OPEN_BOX +
-					to_string(dims[0]) + COMMA + to_string(dims[1]) +
+						to_string(dims[0]) + COMMA + to_string(dims[1]) +
 					CLOSE_BOX + COMMA;
 			}
 
@@ -278,16 +278,16 @@ namespace bridges {
 				ds_json += json_nodes_links.first + CLOSE_CURLY;
 			}
 			else if (ds_type == "ColorGrid") {
-				ds_json +=
-					OPEN_BOX + QUOTE + json_nodes_links.first + QUOTE + CLOSE_BOX
-					+ CLOSE_CURLY;
+				ds_json += 
+						OPEN_BOX + QUOTE + json_nodes_links.first + QUOTE + CLOSE_BOX 
+						 + CLOSE_CURLY;
 			}
 			else {
-				ds_json +=
-					OPEN_BOX + json_nodes_links.first + CLOSE_BOX + COMMA +
-					QUOTE + "links" + QUOTE + COLON + OPEN_BOX +
-					json_nodes_links.second + CLOSE_BOX +
-					CLOSE_CURLY;
+				ds_json += 
+						OPEN_BOX + json_nodes_links.first + CLOSE_BOX + COMMA +
+							QUOTE + "links" + QUOTE + COLON + OPEN_BOX + 
+							json_nodes_links.second + CLOSE_BOX + 
+						CLOSE_CURLY;
 			}
 
 			//
@@ -300,7 +300,7 @@ namespace bridges {
 			try {
 				ServerComm::makeRequest(BASE_URL + to_string(assn_num) + "." +
 					(part > 9 ? "" : "0") + to_string(part) + "?apikey=" + api_key +
-					"&username=" + user_name,
+											"&username=" + user_name,
 				{"Content-Type: text/plain"}, ds_json);
 				cout << "Success: Assignment posted to the server. " << endl <<
 					"Check out your visualization at:" << endl << endl
@@ -308,12 +308,12 @@ namespace bridges {
 				part++;
 			}
 			catch (const string& error_str) {
-				cerr << "\nPosting assignment to the server failed!" << endl
+				cerr << "\nPosting assignment to the server failed!" << endl 
 					<< error_str << endl << endl;
 				cerr << "Provided Bridges Credentials:" << endl <<
-					"\t User Name: " << user_name << endl <<
-					"\t API Key: " << api_key << endl <<
-					"\t Assignment Number: " << assn_num << endl;
+						"\t User Name: " << user_name << endl <<
+						"\t API Key: " << api_key << endl <<
+						"\t Assignment Number: " << assn_num << endl;
 			}
 		}
 	}	//end of Bridges namespace

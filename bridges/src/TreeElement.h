@@ -111,7 +111,7 @@ namespace bridges {
 			 */
 			virtual void cleanup() override {
 				TreeElement* child = nullptr;
-				for (int i = children.size(); i-- > 0;) {
+				for (size_t i = children.size(); i-- > 0;) {
 					child = children.at(i);
 					if (child) {
 						child->cleanup();

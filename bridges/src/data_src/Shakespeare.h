@@ -31,30 +31,28 @@ namespace bridges {
 					text;			// content?
 
 		public:
-			Shakespeare() {
-				title = type = text = "";
+			Shakespeare()
+				: title(""), type(""), text("") {
 			}
-			Shakespeare(string title, string type, string text) {
-				this->title = title;
-				this->type = type;
-				this->text = text;
+			Shakespeare(const string& title, const string& type, const string& text)
+				: title(title), type(type), text(text) {
 			}
-			string getTitle() {
+			string getTitle() const {
 				return title;
 			}
-			void setTitle (string title) {
+			void setTitle (const string& title) {
 				this->title = title;
 			}
-			string getType() {
+			string getType() const {
 				return type;
 			}
-			void setType (string type) {
+			void setType (const string& type) {
 				this->type = type;
 			}
-			string getText() {
+			string getText() const {
 				return text;
 			}
-			void setText (string text) {
+			void setText (const string& text) {
 				this->text = text;
 			}
 	};

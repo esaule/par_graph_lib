@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>~/graphics/bridges/client/cxx/bridges17/src/tmp1.h.html</title>
+<meta name="Generator" content="Vim/8.0">
+<meta name="plugin-version" content="vim7.4_v2">
+<meta name="syntax" content="c">
+<meta name="settings" content="no_progress,use_css,pre_wrap,no_foldcolumn,prevent_copy=">
+<meta name="colorscheme" content="none">
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #000000; background-color: #ffffff; }
+body { font-family: monospace; color: #000000; background-color: #ffffff; }
+* { font-size: 1em; }
+.Error { color: #8080ff; background-color: #ffffff; }
+.Constant { color: #0000c0; text-decoration: underline; }
+.Special { color: #c000c0; font-weight: bold; }
+.Statement { color: #008080; font-weight: bold; }
+.PreProc { color: #c000c0; text-decoration: underline; }
+.Type { color: #008000; text-decoration: underline; }
+.Comment { color: #c00000; font-weight: bold; }
+-->
+</style>
+
+<script type='text/javascript'>
+<!--
+
+-->
+</script>
+</head>
+<body>
+<pre id='vimCodeElement'>
+<span class="PreProc">#ifndef BRIDGES_H</span>
+<span class="PreProc">#define BRIDGES_H</span>
+
+<span class="PreProc">#include </span><span class="Constant">&lt;iostream&gt;</span>
+<span class="PreProc">#include </span><span class="Constant">&lt;algorithm&gt;</span>
+using namespace std;
+
+<span class="PreProc">#include </span><span class="Constant">&quot;DataStructure.h&quot;</span> <span class="Comment">//string, using std</span>
+<span class="PreProc">#include </span><span class="Constant">&quot;ServerComm.h&quot;</span> <span class="Comment">//vector</span>
+
+namespace bridges {
+	<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">	 * @brief This class contains methods to connect and transmit a user's</span>
+<span class="Comment">	 *  data structure representation to the Bridges server (up to 5000 elements)</span>
+<span class="Comment">	 *</span>
+<span class="Comment">	 * @author Kalpathi Subramanian, Dakota Carmer</span>
+<span class="Comment">	 * @date  7/26/15, 6/5/17</span>
+<span class="Comment">	 </span><span class="Comment">*/</span>
+	namespace Bridges {
+		<span class="Comment">// static variables used in Bridges</span>
+
+		<span class="Type">static</span> <span class="Type">bool</span> jsonFlag = <span class="Constant">false</span>;   	<span class="Comment">// if JSON is to be printed</span>
+		<span class="Type">static</span> string user_name = string(), api_key = string(); <span class="Comment">// user credentials</span>
+		<span class="Type">static</span> <span class="Type">unsigned</span> <span class="Type">int</span> assn_num = <span class="Constant">0</span>;	<span class="Comment">// assignment id</span>
+		<span class="Type">static</span> <span class="Type">int</span> *dims = nullptr;
+		<span class="Type">static</span> DataStructure* ds_handle = nullptr;  <span class="Comment">// data structure handle</span>
+		<span class="Type">static</span> string server_url = <span class="Constant">&quot;<a href="http://bridges-cs.herokuapp.com">http://bridges-cs.herokuapp.com</a>&quot;</span>;
+							<span class="Comment">// map overlay options</span>
+		<span class="Type">static</span> string map_overlay_options[] = {<span class="Constant">&quot;cartesian&quot;</span>, <span class="Constant">&quot;albersusa&quot;</span>, <span class="Constant">&quot;equirectangular&quot;</span>};
+		<span class="Type">static</span> <span class="Type">bool</span> map_overlay = <span class="Constant">false</span>;
+		<span class="Type">static</span> string coord_system_type = <span class="Constant">&quot;cartesian&quot;</span>;
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return flag indicating if JSON should be printed upon visualization</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+
+		<span class="Type">bool</span>&amp; getVisualizeJSONFlag() {
+			<span class="Statement">return</span> jsonFlag;;
+		}
+
+		<span class="Type">void</span> setVisualizeJSONFlag(<span class="Type">bool</span> flag) {
+			jsonFlag = flag;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return reference to member holding the username credential</span>
+<span class="Comment">		 *	for the server</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		string&amp; getUserName() {
+			<span class="Statement">return</span> user_name;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@param  user_name   user id to set</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setUserName(string name) {
+			user_name = name;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return Reference to member holding the api key credential for</span>
+<span class="Comment">		 *	the server</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		string&amp; getApiKey() {
+			<span class="Statement">return</span> api_key;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@param k API key to set for user</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setApiKey(string k) {
+			api_key = k;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return Reference to member holding the assignment number for</span>
+<span class="Comment">		 *	holding the visualization on the server</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">unsigned</span> <span class="Type">int</span>&amp; getAssignment() {
+			<span class="Statement">return</span> assn_num;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@param assn sets the assignment number</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setAssignment(<span class="Type">unsigned</span> <span class="Type">int</span> num) {
+			assn_num =  num;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return title of visualization</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">static</span> string title;
+
+		string&amp; getTitle() {
+			<span class="Statement">return</span> title;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	Set  title of visualization</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *  @param title string t</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setTitle(string t) {
+			title = t;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return descr description of visualization</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">static</span> string description;
+
+		string&amp; getDescription() {
+			<span class="Statement">return</span> description;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	@return descr description of visualization</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setDescription(string descr) {
+			description = descr;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	set dimensions of array</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *  @param  d - dimensions of the data structure (array, Grid)</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setDimensions(<span class="Type">int</span> *d) {
+			dims = d;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *  set handle to data structure</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *  @param ds_ptr pointer to user's data Structure</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setDataStructure(DataStructure *ds) {
+			ds_handle = ds;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *  @return Reference to member holding the data structure handle</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		DataStructure*&amp; getDataStructure() {
+			<span class="Statement">return</span> ds_handle;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 * Sets Bridges assignment to &quot;num&quot;, api key to &quot;api&quot; and username</span>
+<span class="Comment">		 *	to &quot;name&quot;.</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 * @param num  The assignment number</span>
+<span class="Comment">		 * @param api The API key</span>
+<span class="Comment">		 * @param user The username</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> initialize(<span class="Type">const</span> <span class="Type">unsigned</span> <span class="Type">int</span>&amp; num, <span class="Type">const</span> string&amp; name,
+			<span class="Type">const</span> string&amp; key) {
+			assn_num = num;
+			user_name = name;
+			api_key = key;
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *  @param  server server to which to connect.</span>
+<span class="Comment">		 *      Options are: ['live', 'local', 'clone'], and 'live' is the default;</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> setServer(string server_type) {
+			<span class="Statement">if</span> (server_type == <span class="Constant">&quot;live&quot;</span>)
+				server_url = <span class="Constant">&quot;<a href="http://bridges-cs.herokuapp.com">http://bridges-cs.herokuapp.com</a>&quot;</span>;
+			<span class="Statement">else</span> <span class="Statement">if</span> (server_type == <span class="Constant">&quot;clone&quot;</span>)
+				server_url = <span class="Constant">&quot;<a href="http://bridges-clone.herokuapp.com">http://bridges-clone.herokuapp.com</a>&quot;</span>;
+			<span class="Statement">else</span> <span class="Statement">if</span> (server_type == <span class="Constant">&quot;local&quot;</span>)
+				server_url = <span class="Constant">&quot;<a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a>&quot;</span>;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *	Turns on map overlay for subsequent visualizations - used with location specific</span>
+<span class="Comment">		 *	datasets</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *  @param flag     this is the boolean flag for displaying a map overlay</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *</span><span class="Comment">*/</span>
+		<span class="Type">void</span> setMapOverlay (<span class="Type">bool</span> overlay_flag) {
+			map_overlay = overlay_flag;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *  Sets the coordinate system type for location specific datasets; default is cartesian</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *	@param coord    this is the desired coordinate space argument</span>
+<span class="Comment">		 *		Options are: ['cartesian', 'albersusa', 'equirectangular']. 'cartesian' </span>
+<span class="Comment">		 *		is the default</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *</span><span class="Comment">*/</span>
+		<span class="Type">void</span> setCoordSystemType (string coord) {
+			std::transform(coord.begin(), coord.end(), coord.begin(), ::tolower);
+			<span class="Statement">if</span> (coord == <span class="Constant">&quot;cartesian&quot;</span> ||coord == <span class="Constant">&quot;albersusa&quot;</span> || coord == <span class="Constant">&quot;equirectangular&quot;</span>)
+				coord_system_type = coord;
+			<span class="Statement">else</span>  {
+				cout &lt;&lt; <span class="Constant">&quot;Unrecognized coordinate system </span><span class="Special">\'</span><span class="Constant">&quot;</span> + coord + <span class="Constant">&quot;</span><span class="Special">\'</span><span class="Constant">, defaulting to &quot;</span>
+					&lt;&lt; <span class="Constant">&quot;cartesian. Options:&quot;</span>;
+				<span class="Statement">for</span> (<span class="Type">auto</span> proj : map_overlay_options)
+					cout &lt;&lt;  + <span class="Constant">&quot;</span><span class="Special">\t</span><span class="Constant">&quot;</span> ;
+				coord_system_type = <span class="Constant">&quot;cartesian&quot;</span>;
+			}
+		}
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 *  Gets the coordinate system type for location specific datasets</span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *	@return coord system type ; will be one of   </span>
+<span class="Comment">		 *	['cartesian', 'albersUsa', 'equirectangular']. 'cartesian' </span>
+<span class="Comment">		 *</span>
+<span class="Comment">		 *</span><span class="Comment">*/</span>
+		string  getCoordSystemType () {
+			<span class="Statement">return</span> coord_system_type;
+		}
+
+		<span class="Comment">/*</span><span class="Comment">*</span>
+<span class="Comment">		 * Sends relevant data handle information to the server, and</span>
+<span class="Comment">		 * upon successful completion, prints the URL to display the</span>
+<span class="Comment">		 * Bridges visualization.</span>
+<span class="Comment">		 </span><span class="Comment">*/</span>
+		<span class="Type">void</span> visualize() {
+			<span class="Type">static</span> <span class="Type">unsigned</span> <span class="Type">int</span> lastAssign = <span class="Constant">0</span>, part = <span class="Constant">0</span>;
+			<span class="Type">static</span> <span class="Type">const</span> string BASE_URL = server_url + <span class="Constant">&quot;/assignments/&quot;</span>;
+
+			<span class="Statement">if</span> (assn_num != lastAssign) { 		<span class="Comment">// reset if a new assignment</span>
+				lastAssign = assn_num;
+				part = <span class="Constant">0</span>;
+			}
+			<span class="Statement">if</span> (part == <span class="Constant">99</span>) {
+				cout &lt;&lt; <span class="Constant">&quot;#sub-assignments limit(99) exceeded, visualization not generated ..&quot;</span>
+					&lt;&lt; endl;
+				<span class="Statement">return</span>;
+			}
+			<span class="Statement">if</span> (!ds_handle) {
+				cerr &lt;&lt; <span class="Constant">&quot;Error: Data Structure handle null! Visualization not generated.&quot;</span>;
+				<span class="Statement">return</span>;
+			}
+
+			<span class="Comment">// generate the JSON of the data structure</span>
+
+			string ds_type = ds_handle-&gt;getDStype();
+			string ds_json = OPEN_CURLY +
+				QUOTE + <span class="Constant">&quot;visual&quot;</span> + QUOTE + COLON + QUOTE + ds_type + QUOTE + COMMA +
+				QUOTE + <span class="Constant">&quot;title&quot;</span> + QUOTE + COLON + QUOTE + getTitle() + QUOTE + COMMA +
+				QUOTE + <span class="Constant">&quot;description&quot;</span> + QUOTE + COLON + QUOTE + getDescription() + QUOTE + COMMA +
+				QUOTE + <span class="Constant">&quot;map_overlay&quot;</span> + QUOTE + COLON + ((map_overlay) ? <span class="Constant">&quot;true&quot;</span> : <span class="Constant">&quot;false&quot;</span>) + COMMA +
+				QUOTE + <span class="Constant">&quot;coord_system_type&quot;</span> + QUOTE + COLON + QUOTE + getCoordSystemType() + QUOTE + COMMA;
+
+			<span class="Comment">// for Array and Grid types, must pass dimensions</span>
+			<span class="Statement">if</span> (ds_type == <span class="Constant">&quot;Array&quot;</span>) {
+				<span class="Comment">// get dimensions</span>
+				<span class="Comment">// write dimensions</span>
+				ds_json += QUOTE + <span class="Constant">&quot;dims&quot;</span> + QUOTE + COLON +
+					OPEN_BOX +
+					to_string(dims[<span class="Constant">0</span>]) + COMMA +
+					to_string(dims[<span class="Constant">1</span>]) + COMMA +
+					to_string(dims[<span class="Constant">2</span>]) +
+					CLOSE_BOX + COMMA;
+			}
+			<span class="Statement">else</span> <span class="Statement">if</span> (ds_type == <span class="Constant">&quot;ColorGrid&quot;</span>) {
+						<span class="Comment">// get dimensions</span>
+				ds_json += QUOTE + <span class="Constant">&quot;dimensions&quot;</span> + QUOTE + COLON +
+					OPEN_BOX +
+						to_string(dims[<span class="Constant">0</span>]) + COMMA + to_string(dims[<span class="Constant">1</span>]) +
+					CLOSE_BOX + COMMA;
+			}
+
+			<span class="Comment">//</span>
+			<span class="Comment">// get the nodes and link representations</span>
+			<span class="Comment">//</span>
+
+			ds_json +=  QUOTE + <span class="Constant">&quot;nodes&quot;</span>  + QUOTE + COLON;
+			<span class="Type">const</span> pair&lt;string, string&gt; json_nodes_links =
+				ds_handle-&gt;getDataStructureRepresentation();
+
+			<span class="Comment">//</span>
+			<span class="Comment">// for tree structures, get a hierarchical JSON representation</span>
+			<span class="Comment">// of the nodes and links</span>
+			<span class="Comment">//</span>
+			<span class="Statement">if</span>  (ds_type == <span class="Constant">&quot;Tree&quot;</span> || ds_type == <span class="Constant">&quot;BinaryTree&quot;</span> ||
+				ds_type == <span class="Constant">&quot;BinarySearchTree&quot;</span> || ds_type == <span class="Constant">&quot;AVLTree&quot;</span> ) {
+				ds_json += json_nodes_links.first + CLOSE_CURLY;
+			}
+			<span class="Statement">else</span> <span class="Statement">if</span> (ds_type == <span class="Constant">&quot;ColorGrid&quot;</span>) {
+				ds_json +=
+						OPEN_BOX + QUOTE + json_nodes_links.first + QUOTE + CLOSE_BOX
+						 + CLOSE_CURLY;
+			}
+			<span class="Statement">else</span> {
+				ds_json +=
+						OPEN_BOX + json_nodes_links.first + CLOSE_BOX + COMMA +
+							QUOTE + <span class="Constant">&quot;links&quot;</span> + QUOTE + COLON + OPEN_BOX +
+							json_nodes_links.second + CLOSE_BOX +
+						CLOSE_CURLY;
+			}
+
+			<span class="Comment">//</span>
+			<span class="Comment">// print JSON if flag is on</span>
+			<span class="Comment">//</span>
+			<span class="Statement">if</span> (getVisualizeJSONFlag()) {
+				cout &lt;&lt; <span class="Constant">&quot;JSON String:</span><span class="Special">\t</span><span class="Constant">&quot;</span> &lt;&lt; ds_json &lt;&lt; endl;
+			}
+
+			try {
+				ServerComm::makeRequest(BASE_URL + to_string(assn_num) + <span class="Constant">&quot;.&quot;</span> +
+					(part &gt; <span class="Constant">9</span> ? <span class="Constant">&quot;&quot;</span> : <span class="Constant">&quot;0&quot;</span>) + to_string(part) + <span class="Constant">&quot;?apikey=&quot;</span> + api_key +
+											<span class="Constant">&quot;&amp;username=&quot;</span> + user_name,
+				<span class="Error">{</span><span class="Constant">&quot;Content-Type: text/plain&quot;</span><span class="Error">}</span>, ds_json);
+				cout &lt;&lt; <span class="Constant">&quot;Success: Assignment posted to the server. &quot;</span> &lt;&lt; endl &lt;&lt;
+					<span class="Constant">&quot;Check out your visualization at:&quot;</span> &lt;&lt; endl &lt;&lt; endl
+					&lt;&lt; BASE_URL + to_string(assn_num) + <span class="Constant">&quot;/&quot;</span> + user_name &lt;&lt; endl &lt;&lt; endl;
+				part++;
+			}
+			catch (<span class="Type">const</span> string&amp; error_str) {
+				cerr &lt;&lt; <span class="Constant">&quot;</span><span class="Special">\n</span><span class="Constant">Posting assignment to the server failed!&quot;</span> &lt;&lt; endl
+					&lt;&lt; error_str &lt;&lt; endl &lt;&lt; endl;
+				cerr &lt;&lt; <span class="Constant">&quot;Provided Bridges Credentials:&quot;</span> &lt;&lt; endl &lt;&lt;
+						<span class="Constant">&quot;</span><span class="Special">\t</span><span class="Constant"> User Name: &quot;</span> &lt;&lt; user_name &lt;&lt; endl &lt;&lt;
+						<span class="Constant">&quot;</span><span class="Special">\t</span><span class="Constant"> API Key: &quot;</span> &lt;&lt; api_key &lt;&lt; endl &lt;&lt;
+						<span class="Constant">&quot;</span><span class="Special">\t</span><span class="Constant"> Assignment Number: &quot;</span> &lt;&lt; assn_num &lt;&lt; endl;
+			}
+		}
+	}	<span class="Comment">//end of Bridges namespace</span>
+
+
+}	<span class="Comment">// end of bridges namespace</span>
+<span class="PreProc">#endif</span>
+</pre>
+</body>
+</html>
+<!-- vim: set foldmethod=manual : -->
