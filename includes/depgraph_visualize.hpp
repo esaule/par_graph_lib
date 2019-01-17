@@ -168,7 +168,7 @@ namespace depgraph {
       if (x != prev) {
 	auto vert_prev_p = g.getVertices()->find(tasklist[prev])->second;
 	auto link_viz_p = vert_x_p->getLinkVisualizer(vert_prev_p);
-	link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS * 10.);
+	link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS() * 10.);
 	link_viz_p->setColor(bridges::Color(255,0,0));
       }
 
@@ -228,10 +228,10 @@ namespace depgraph {
 
     get_bridges_account(bridges_user, bridges_apikey);
     
-    bridges::Bridges::initialize(channel, bridges_user, bridges_apikey);
+    bridges::Bridges br(channel, bridges_user, bridges_apikey);
 
-    bridges::Bridges::setTitle(title);
-    bridges::Bridges::setDescription(description);
+    br.setTitle(title);
+    br.setDescription(description);
 
     if (basic_graph.size() == 0) //if not built
       build_graph();
@@ -263,7 +263,7 @@ namespace depgraph {
 	link_viz_p -> setLabel(why_depends_on(u,v));
 	//we are on a scaled version. need bigger arrows
 	if (hints.find(tasklist[u]) != hints.end()) {
-	link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS * 3.);
+	  link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS() * 3.);
 	}
       }
     }
@@ -272,7 +272,7 @@ namespace depgraph {
     if (highlightCP)
       highlight_criticalpath();
         
-    bridges::Bridges::setDataStructure(&g);
+    br.setDataStructure(&g);
     
     auto end = std::chrono::system_clock::now();
 
@@ -280,7 +280,7 @@ namespace depgraph {
  
     std::cout << "time to build viz: " << elapsed_seconds.count() << "s\n";
     
-    bridges::Bridges::visualize();
+    br.visualize();
 
   }
     
