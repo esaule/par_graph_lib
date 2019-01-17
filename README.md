@@ -51,7 +51,11 @@ Now running the bubble sort code should give you a visualization
 
 ```$ ./bubble 6```
 
-This returns this URL for me: http://bridges-cs.herokuapp.com/assignments/2/esaule
+This returns this URL for me:
+http://bridges-cs.herokuapp.com/assignments/2/esaule (assuming I
+haven't run something else since you should see the bubble sort
+visualization at that address). You can see additional information by
+activating the node and link labels.
 
 ## Extracting dependencies of your own code
 
