@@ -1,4 +1,6 @@
-# Getting Started
+# par_graph_lib
+
+## Getting Started
 
 This is the repository for par_graph_lib, a tool used at UNC Charlotte
 to teach Parallel Computing.
@@ -51,6 +53,6 @@ Now running the bubble sort code should give you a visualization
 
 This returns this URL for me: http://bridges-cs.herokuapp.com/assignments/2/esaule
 
-# Extracting dependencies of your own code
+## Extracting dependencies of your own code
 
 TO COME
