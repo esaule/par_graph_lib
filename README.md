@@ -40,8 +40,10 @@ Create a file in your home directory called `.pargraphrc`. This file
 should contain two lines, the first one is the username and the second
 one is the apikey. For me, the file contains:
 
-```esaule
-0123456789```
+```
+esaule
+0123456789
+```
 
 Now running the bubble sort code should give you a visualization
 
