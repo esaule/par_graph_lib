@@ -1,4 +1,4 @@
-1#include <iostream>
+#include <iostream>
 #include <sstream>
 #include "depgraph.hpp"
 
@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
   arr = new int[SIZE];
   
   for (int i=0; i<SIZE; ++i) {
-    arr[i] = i(*134+3542445)%223;
+    arr[i] = (i*134+3542445)%223;
   }
 
   bubblesort(arr, SIZE);
