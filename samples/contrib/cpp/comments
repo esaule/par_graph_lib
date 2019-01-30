@@ -1,7 +1,0 @@
-//suggested by Brandon Beckwith
-//todo:
-//-It seems quick_original produces a chain because the array is already sorted at the beginning. So there is only one active branch in the recursion. By tuning the array generation it generates something that makes a bit more sense.
-//-Though the variable read seem wrong. The first reading of cLow is incorrect, cLow is incremented before being used. As is, the dependency marked is on array[-1]
-//-The code should set the cost of the computation for correct computation of the critical path.
-//-And layout of original could be improved by taking depth into account when computing location. 
-

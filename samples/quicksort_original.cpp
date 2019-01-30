@@ -1,3 +1,5 @@
+//This is a contribution from Brandon Beckwith
+
 #include <iostream>
 #include <sstream>
 #include "depgraph.hpp"
@@ -10,42 +12,43 @@ void swap(int* a, int* b){
 }
 
 //quicksort partition
-int partition(int array[], int low, int high){
+int partition(int array[], int low, int high, int depth){ //depth is just passed for layouting reason.
   int pivot = array[high];
-  int cLow = low;
+  int cLow = low-1;
 
-  //Make a task for each partition using low and high and provide a hint location
-  { std::stringstream ss; ss<<"("<<low<<","<<high<<")"; depgraph::newtask (ss.str()); }
-  depgraph::hintlocation(low,high);
-
-  for (int i = low; i < high; i++){
-
+  //Make a task for each partition using low and high
+  { std::stringstream ss; ss<<"partition("<<low<<","<<high<<")"; depgraph::newtask (ss.str()); } 
+  //depgraph::hintlocation(low,high); // Probably should not provide a hint location like that Depth+low could be better?
+  {depgraph::setprocessingtime(high-low+1);}
+  depgraph::hintlocation(((high+low)/2)/3.,depth*3); // this should give us a reasonnable layout
+  
+  for (int i = low; i <= high; i++){
+    
     //Mark a swap
-    { std::stringstream ss; ss<<"array["<<cLow<<"]"; depgraph::readwrite (ss.str()); }    
+    { std::stringstream ss; ss<<"array["<<cLow+1<<"]"; depgraph::readwrite (ss.str()); } //there is a +1 here since cLow would be increased.
     { std::stringstream ss; ss<<"array["<<i<<"]"; depgraph::readwrite (ss.str()); }
 
     if (array[i] < pivot){
+      cLow++;
       swap(&array[cLow], &array[i]);
-      cLow += 1;
     }
   }
 
   //Gotta account for the last swap
-  { std::stringstream ss; ss<<"array["<<cLow<<"]"; depgraph::readwrite (ss.str()); }      
+  { std::stringstream ss; ss<<"array["<<cLow + 1<<"]"; depgraph::readwrite (ss.str()); }       
   { std::stringstream ss; ss<<"array["<<high<<"]"; depgraph::readwrite (ss.str()); }
 
-  swap(&array[cLow], &array[high]);
-  return cLow;
+  swap(&array[cLow + 1], &array[high]);
+  return cLow + 1;
 }
 
 //Simple recursive quicksort
-void quicksort(int array[], int low, int high){
+void quicksort(int array[], int low, int high, int depth = 0){  //depth is just passed for layouting reason.
   if (low < high){
-    int partitionIndex = partition(array, low, high);
-    std::cout<<"partitionIndex: " << partitionIndex << std::endl;
+    int partitionIndex = partition(array, low, high, depth);
 
-    quicksort(array, low, partitionIndex - 1);
-    quicksort(array, partitionIndex + 1, high);
+    quicksort(array, low, partitionIndex - 1, depth+1);
+    quicksort(array, partitionIndex + 1, high, depth+1);
   }
 }
 
@@ -67,22 +70,10 @@ int main (int argc, char* argv[]) {
   arr = new int[SIZE];
   
   for (int i=0; i<SIZE; ++i) {
-    arr[i] = (SIZE - i)*134+3542445%223;
+    arr[i] = (i*134+3542445)%223;
   }
-
-  std::cout << "Start: [";
-  for (int i=0; i < SIZE; i++){
-    std::cout << arr[i] << ", ";
-  }
-  std::cout << "]" << std::endl;
 
   quicksort(arr, 0, SIZE - 1); //Call our quicksort
-
-  std::cout << "Done: [";
-  for (int i=0; i < SIZE; i++){
-    std::cout << arr[i] << ", ";
-  }
-  std::cout << "]" << std::endl;
 
   depgraph::listall();
 
