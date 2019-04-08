@@ -36,12 +36,23 @@ int main (int argc, char* argv[]) {
   }
   
   int SIZE = atoi(argv[1]); //TODO: unsafe
-  int completeviz = 1;
-  int reducedviz = 2;
+  int taskviz = 1;
+  int accessviz = 2;
+  int completeviz = 3;
+  int reducedviz = 4;
+  int cpviz = 5;
   if (argc > 2)
-    completeviz = atoi(argv[2]); //TODO: unsafe
+    taskviz = atoi(argv[2]); //TODO: unsafe
   if (argc > 3)
-    reducedviz = atoi(argv[3]); //TODO: unsafe
+    accessviz = atoi(argv[3]); //TODO: unsafe
+  if (argc > 4)
+    completeviz = atoi(argv[4]); //TODO: unsafe
+  if (argc > 5)
+    reducedviz = atoi(argv[5]); //TODO: unsafe
+  if (argc > 6)
+    cpviz = atoi(argv[6]); //TODO: unsafe
+
+  
   arr = new int[SIZE];
   
   for (int i=0; i<SIZE; ++i) {
@@ -52,9 +63,13 @@ int main (int argc, char* argv[]) {
 
   depgraph::listall();
 
-  depgraph::visualize(completeviz, true, true, "Bubble Sort", "with transitive");
-  depgraph::visualize(reducedviz, false, true, "Bubble Sort", "without transitive");
+  depgraph::visualize(taskviz, true, true, "Bubble Sort", "List all tasks", true, false);
+  depgraph::visualize(accessviz, true, true, "Bubble Sort", "List tasks and access", true, true);
+  depgraph::visualize(completeviz, true, false, "Bubble Sort", "Find dependencies", false, false);
+  depgraph::visualize(reducedviz, false, false, "Bubble Sort", "Remove transitive dependencies", false, false);
+  depgraph::visualize(cpviz, false, true, "Bubble Sort", "Identify critical path", false, false);
 
+  
   delete[] arr;
   
   return 0;
