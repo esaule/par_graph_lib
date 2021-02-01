@@ -58,12 +58,14 @@ namespace depgraph {
     auto order = topological_order(dag);
 
     std::unordered_map<string, int> level;
+    std::unordered_map<string, int> maxparentlevel;
     
     auto setlabel = [&](std::string vert) {
 		      auto myver = dag.getVertex(vert);
 		      myver->setLabel(vert
 				      +"\nP = "+std::to_string(dag.getVertexData(vert))
-				      +"\nL = "+std::to_string(level[vert]));
+				      +"\nMaxParentLevel="+std::to_string(maxparentlevel[vert])
+				      +"\nLevel = "+std::to_string(level[vert]));
 		    };
 
 
@@ -72,6 +74,11 @@ namespace depgraph {
 			 setlabel(vert);
 		    };
 
+    auto updateparentlevel = [&](std::string vert, int newlevel) {
+			 maxparentlevel[vert] = newlevel;
+			 setlabel(vert);
+		    };
+    
     auto deactivateedge = [&](std::string from, std::string to) {
 			   dag.getLinkVisualizer(from, to)->setColor("lightgrey");
 			 };
@@ -94,6 +101,7 @@ namespace depgraph {
     
     for (auto v : order) {
       level[v] = 0;
+      maxparentlevel[v] = 0;
       setlabel(v);
     }
     
@@ -101,14 +109,14 @@ namespace depgraph {
       std::cout<<v<<"\n";
       highlightvert(v);
       
-      updatelevel(v, level[v] + dag.getVertexData(v));
+      updatelevel(v, maxparentlevel[v] + dag.getVertexData(v));
       br.visualize();
       
       for (auto edge : dag.outgoingEdgeSetOf(v)) {
 	auto from = edge.from();
 	auto to = edge.to();
 
-	updatelevel(to, std::max(level[to], level[v]));
+	updateparentlevel(to, std::max(maxparentlevel[to], level[v]));
 	highlightedge(from, to);
 	
 	br.visualize();
@@ -119,7 +127,8 @@ namespace depgraph {
       br.visualize();
       deactivatevert(v);
     }
-
+    
+    br.visualize();//to show the final deactivation
     
   }
   

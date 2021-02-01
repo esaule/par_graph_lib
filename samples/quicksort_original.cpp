@@ -20,7 +20,7 @@ int partition(int array[], int low, int high, int depth){ //depth is just passed
   { std::stringstream ss; ss<<"partition("<<low<<","<<high<<")"; depgraph::newtask (ss.str()); } 
   //depgraph::hintlocation(low,high); // Probably should not provide a hint location like that Depth+low could be better?
   {depgraph::setprocessingtime(high-low+1);}
-  depgraph::hintlocation(((high+low)/2)/3.,depth*.5); // this should give us a reasonnable layout
+  depgraph::hintlocation(((high+low)/2)/3.,depth*1.); // this should give us a reasonnable layout
   
   for (int i = low; i <= high; i++){
     
