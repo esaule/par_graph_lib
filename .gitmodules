@@ -3,4 +3,4 @@
 	url = https://github.com/Tencent/rapidjson
 [submodule "bridges-cxx"]
 	path = bridges-cxx
-	url = https://github.com/krs-world/bridges-cxx.git
+	url = git@github.com:BridgesUNCC/bridges-cxx.git

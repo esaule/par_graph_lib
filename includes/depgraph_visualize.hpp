@@ -239,10 +239,7 @@ namespace depgraph {
 	&& simplified_graph.size() == 0) //not built
       remove_transitive(basic_graph, simplified_graph);
 
-    bridges::GraphAdjList<string,int> g;
-
-    
-    g = bridges::GraphAdjList<string,int>();
+    bridges::GraphAdjList<string,int>     g = bridges::GraphAdjList<string,int>();
 
     for (int u=0; u<tasklist.size(); ++u) {
       g.addVertex(tasklist[u], processing_time[u]);
