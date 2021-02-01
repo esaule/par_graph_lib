@@ -134,10 +134,6 @@ namespace depgraph {
   
   void animate_toplevel (bridges::GraphAdjList<string,int>& dag,
 			 int channel) {
-    
-    
-    auto start = std::chrono::system_clock::now();
-
     std::string bridges_user;
     std::string bridges_apikey;
 

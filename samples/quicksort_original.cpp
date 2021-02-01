@@ -82,7 +82,8 @@ int main (int argc, char* argv[]) {
 
   auto a = depgraph::generate_bridges_graph(false, false, false, false, false);
 
-  depgraph::animate_toplevel(a,555);
+  //depgraph::animate_toplevel(a,555);
+  depgraph::animate_listscheduling(a, 3, 777);
   
   delete[] arr;
   

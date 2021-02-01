@@ -304,5 +304,6 @@ namespace depgraph {
 
 
 #include "depgraph_toplevel.hpp"
+#include "depgraph_schedule.hpp"
 
 #endif
