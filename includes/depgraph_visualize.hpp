@@ -113,15 +113,14 @@ namespace depgraph {
     }
   }
 
-  bridges::GraphAdjList<string,int> g;
 
-
-  std::vector<int> toplevel;
-  std::vector<int> predecessor;
-  int sinkvertex;
   
-  //this algorithm works because the vertices are topo sorted
-  void highlight_criticalpath() {
+  //this algorithm only works because the vertices are topo sorted
+  void highlight_criticalpath(    bridges::GraphAdjList<string,int>& g  ) {
+
+    std::vector<int> toplevel;
+    std::vector<int> predecessor;
+    int sinkvertex;
     
 
     if (toplevel.size() == 0) {
@@ -240,10 +239,13 @@ namespace depgraph {
 	&& simplified_graph.size() == 0) //not built
       remove_transitive(basic_graph, simplified_graph);
 
+    bridges::GraphAdjList<string,int> g;
+
+    
     g = bridges::GraphAdjList<string,int>();
 
     for (int u=0; u<tasklist.size(); ++u) {
-      g.addVertex(tasklist[u], 0);
+      g.addVertex(tasklist[u], processing_time[u]);
 
       auto lh = hints.find(tasklist[u]);
       if (lh != hints.end()) {
@@ -270,7 +272,7 @@ namespace depgraph {
 
     if (!noedges)
     if (highlightCP)
-      highlight_criticalpath();
+      highlight_criticalpath(g);
         
     br.setDataStructure(&g);
     
