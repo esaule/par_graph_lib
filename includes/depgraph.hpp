@@ -29,7 +29,7 @@ namespace depgraph {
   };
 
   struct loc_hint {
-    int i, j;
+    double i, j;
   };
   
   std::vector<std::string> tasklist;
@@ -63,7 +63,7 @@ namespace depgraph {
 
   ///hints to the display that the current task should be at position
   ///(i,j)
-  void hintlocation(int i, int j = 0) {
+  void hintlocation(double i, double j = 0) {
     loc_hint lh;
     lh.i=i;
     lh.j=j;

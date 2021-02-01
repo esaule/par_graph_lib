@@ -209,30 +209,15 @@ namespace depgraph {
       return;
     }
   }
-  
 
-  void visualize(int channel,
-		 bool use_simple = false,
+  bridges::GraphAdjList<string,int>     generate_bridges_graph(		 bool use_simple = false,
 		 bool highlightCP = true,
-		 std::string title = "",
-		 std::string description = "",
 		 bool noedges=false,
-		 bool printaccess=false
-		 ) {
+									 bool printaccess=false,
+									 bool why = true
+) {
 
-    auto start = std::chrono::system_clock::now();
-
-    std::string bridges_user;
-    std::string bridges_apikey;
-
-    get_bridges_account(bridges_user, bridges_apikey);
-    
-    bridges::Bridges br(channel, bridges_user, bridges_apikey);
-
-    br.setTitle(title);
-    br.setDescription(description);
-
-    if (basic_graph.size() == 0) //if not built
+ if (basic_graph.size() == 0) //if not built
       build_graph();
 
     if ((!use_simple) 
@@ -259,7 +244,8 @@ namespace depgraph {
       for (auto v : (use_simple?basic_graph:simplified_graph)[u]) {
 	g.addEdge(tasklist[u], tasklist[v], 1);
 	auto link_viz_p = g.getLinkVisualizer(tasklist[u], tasklist[v]);
-	link_viz_p -> setLabel(why_depends_on(u,v));
+	if (why)
+	  link_viz_p -> setLabel(why_depends_on(u,v));
 	//we are on a scaled version. need bigger arrows
 	if (hints.find(tasklist[u]) != hints.end()) {
 	  link_viz_p->setThickness(bridges::LinkVisualizer::DEFAULT_THICKNESS() * 3.);
@@ -270,7 +256,38 @@ namespace depgraph {
     if (!noedges)
     if (highlightCP)
       highlight_criticalpath(g);
-        
+   
+
+    return g;
+  }
+
+
+  void visualize(int channel,
+		 bool use_simple = false,
+		 bool highlightCP = true,
+		 std::string title = "",
+		 std::string description = "",
+		 bool noedges=false,
+		 bool printaccess=false
+		 ) {
+
+    auto start = std::chrono::system_clock::now();
+
+    std::string bridges_user;
+    std::string bridges_apikey;
+
+    
+    get_bridges_account(bridges_user, bridges_apikey);
+    
+    bridges::Bridges br(channel, bridges_user, bridges_apikey);
+
+    br.setTitle(title);
+    br.setDescription(description);
+
+
+    bridges::GraphAdjList<string,int>     g = generate_bridges_graph(use_simple, highlightCP, noedges, printaccess);
+
+    
     br.setDataStructure(&g);
     
     auto end = std::chrono::system_clock::now();
@@ -285,5 +302,7 @@ namespace depgraph {
     
 }
 
+
+#include "depgraph_toplevel.hpp"
 
 #endif
