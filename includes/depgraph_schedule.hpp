@@ -13,22 +13,51 @@
 namespace depgraph {
 
 
-  void animate_listscheduling_inner(bridges::GraphAdjList<string,int>& dag, int nbproc,  bridges::Bridges& br) {
+  void animate_listscheduling_inner(bridges::GraphAdjList<string,int>& dag, int nbproc,
+				    bridges::Bridges& brgantt,bridges::Bridges& brgraph) {
 
     double procheight = 50.;
     double procvspace = 10.;
     double proclabelxloc = -20.;
     double unittime_width = 15.;
+    double tic_length = 2.;
+    double timelabelyspacing = -10;
+    double timelabelxspacing = -2;
+
     
     double maxtime = animate_toplevel(dag, -1, false);
+    double totalwork = 0.;
+    for (auto v : dag.keySet()) {
+      totalwork += dag.getVertexData(v);
+    }
+    maxtime += totalwork/nbproc;
     
-    //set y-axis
+    //set axes
     
-    bridges::Polygon yaxis;
+    bridges::Polyline yaxis;
     yaxis.addPoint(0,0);
     yaxis.addPoint(0, nbproc*procheight+(nbproc-1)*procvspace);
 
+    bridges::Polyline xaxis;
+    xaxis.addPoint(0, 0);
+    xaxis.addPoint(maxtime*unittime_width, 0);
+
+    bridges::Label timel ("time");
+    timel.setLocation(maxtime*unittime_width+timelabelxspacing, 0+timelabelyspacing);
     
+    std::vector<bridges::Polyline> tics;
+    for (int i=0; i<(int)maxtime; ++i) {
+      bridges::Polyline tic;
+      tic.addPoint(i*unittime_width, 0);
+      if (i%5 != 0)
+	tic.addPoint(i*unittime_width, -tic_length);
+      else
+	if (i%10 != 0)
+	  tic.addPoint(i*unittime_width, -tic_length*3);
+	else
+	  tic.addPoint(i*unittime_width, -tic_length*5);
+      tics.push_back(tic);
+    }
     
     std::vector<bridges::Label> proclabels;
     for (int i=0; i<nbproc; ++i) {
@@ -59,9 +88,17 @@ namespace depgraph {
     auto push_gantt_chart
       = [&]() {
 	  bridges::SymbolCollection gantt;
-    
+
+	  //axes
 	  gantt.addSymbol(&yaxis);
-    	  
+	  gantt.addSymbol(&xaxis);
+
+	  for (auto& t: tics) {
+	    gantt.addSymbol(&t);
+	  }
+
+	  gantt.addSymbol(&timel);
+	  
 	  // add all objects in collections
 	  
 	  for (int i=0; i<nbproc; ++i) {
@@ -78,11 +115,23 @@ namespace depgraph {
 	  
 	  gantt.setViewport(-40., (maxtime+2)*unittime_width, -20, nbproc*(procvspace+procheight));
 	  
-	  br.setDataStructure(gantt);
-	  br.visualize();
+	  brgantt.setDataStructure(gantt);
+	  brgantt.visualize();
 	  
 	};
+
+    auto push_graph
+      = [&]() {
+	  brgraph.setDataStructure(dag);
+	  brgraph.visualize();
+	};
     
+    auto renderit = [&]() {
+		      push_gantt_chart();
+		      push_graph();
+		    };
+
+      
     std::unordered_map<string, int> ready_time;
     auto ind = in_degree(dag);
     auto cmp = [](std::pair<int, string> a, std::pair<int, string> b){
@@ -91,6 +140,37 @@ namespace depgraph {
 			std::vector<std::pair<int, string>>,
 			decltype(cmp)> pqueue(cmp);
 
+
+    auto highlighttask
+      = [&](std::string task) {
+	  auto myver = dag.getVertex(task);
+	  myver->setColor("red");
+	};
+
+    auto deactivatetask
+      = [&](std::string task) {
+	  auto myver = dag.getVertex(task);
+	  myver->setColor("lightgrey");
+	  myver->setLabel("");
+	};
+
+    auto deactivateedge
+      = [&](std::string from, std::string to) {
+	    dag.getLinkVisualizer(from, to)->setColor("lightgrey");
+	};
+
+    auto highlightedge
+      = [&](std::string from, std::string to) {
+	    dag.getLinkVisualizer(from, to)->setColor("red");
+	};
+    
+    auto updatelabel
+      = [&](std::string task) {
+	  auto myver = dag.getVertex(task);
+	  myver->setLabel(task
+			  +"\nreadyTime = "+std::to_string(ready_time[task]));
+	};
+    
     std::vector<int> proc_ready;
     for (int i=0;i<nbproc; ++i)
       proc_ready.push_back(0);
@@ -99,14 +179,20 @@ namespace depgraph {
       ready_time[s] = 0;
       if (ind[s] == 0)
 	pqueue.push(std::make_pair(ready_time[s], s));      
+      updatelabel(s);
     }
 
+    renderit();
+    
     while (! pqueue.empty()) {
       //pop task
       auto task = pqueue.top().second;
       auto task_ready = pqueue.top().first;
       pqueue.pop();
 
+      highlighttask(task);
+      updatelabel(task);
+      renderit();
       std::cout<<"scheduling "<<task<<"\n";
       
       //identify first processor ready
@@ -119,9 +205,9 @@ namespace depgraph {
 	}
       }
       
+      
       std::cout<<"minproc "<<minproc<< " available at "<<minproc_time<<"\n";
-      
-      
+            
       //schedule task
       int sched_time = std::max(task_ready, minproc_time);
       int endtime = sched_time+dag.getVertexData(task);
@@ -129,6 +215,8 @@ namespace depgraph {
 
       //update processor
       proc_ready[minproc] = endtime;
+
+      renderit();
       
       //update descendant
       for (auto edge : dag.outgoingEdgeSetOf(task)) {
@@ -140,20 +228,28 @@ namespace depgraph {
 	if (ind[to] == 0)
 	  pqueue.push(std::make_pair(ready_time[to], to));      
 
+	highlightedge(from, to);
+	
+	updatelabel(to);
+	renderit();
+	
+	deactivateedge(from, to);
 	std::cout<<"task "<<to<< " can't run before "<<ready_time[to]<<"\n";
-
+	
 	
       }
-      push_gantt_chart();
+      deactivatetask(task);
+      renderit();
+
     }
 
-    push_gantt_chart();
+    renderit();
   }
   
   
   void animate_listscheduling (bridges::GraphAdjList<string,int>& dag,
 			       int nbproc,
-			       int channel) {
+			       int channelgantt, int channelgraph) {
     
     auto start = std::chrono::system_clock::now();
 
@@ -162,12 +258,12 @@ namespace depgraph {
 
     get_bridges_account(bridges_user, bridges_apikey);
     
-    bridges::Bridges br(channel, bridges_user, bridges_apikey);
+    bridges::Bridges brgantt(channelgantt, bridges_user, bridges_apikey);
+    bridges::Bridges brgraph(channelgraph, bridges_user, bridges_apikey);
 
 
-    br.setDataStructure(dag);
 
-    animate_listscheduling_inner(dag, nbproc, br);
+    animate_listscheduling_inner(dag, nbproc, brgantt, brgraph);
     
   }
 }
