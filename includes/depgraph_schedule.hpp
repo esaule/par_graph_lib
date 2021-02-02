@@ -18,19 +18,17 @@ namespace depgraph {
     double procheight = 50.;
     double procvspace = 10.;
     double proclabelxloc = -20.;
-    double unittime_width = 5.;
+    double unittime_width = 15.;
     
-    double maxtime = 1.;
+    double maxtime = animate_toplevel(dag, -1, false);
     
-    bridges::SymbolCollection gantt;
-
     //set y-axis
     
     bridges::Polygon yaxis;
     yaxis.addPoint(0,0);
     yaxis.addPoint(0, nbproc*procheight+(nbproc-1)*procvspace);
 
-    gantt.addSymbol(&yaxis);
+    
     
     std::vector<bridges::Label> proclabels;
     for (int i=0; i<nbproc; ++i) {
@@ -58,26 +56,98 @@ namespace depgraph {
 			  };
 
 
-    add_gantt_task("mytask", 0, 10, 1);
+    auto push_gantt_chart
+      = [&]() {
+	  bridges::SymbolCollection gantt;
     
-    // add all objects in collections
+	  gantt.addSymbol(&yaxis);
+    	  
+	  // add all objects in collections
+	  
+	  for (int i=0; i<nbproc; ++i) {
+	    gantt.addSymbol(&proclabels[i]);
+	  }
+	  
+	  for (auto& r: taskrect) {
+	    gantt.addSymbol(&r);
+	  }
+	  
+	  for (auto& l: tasklabels) {
+	    gantt.addSymbol(&l);
+	  }
+	  
+	  gantt.setViewport(-40., (maxtime+2)*unittime_width, -20, nbproc*(procvspace+procheight));
+	  
+	  br.setDataStructure(gantt);
+	  br.visualize();
+	  
+	};
     
-    for (int i=0; i<nbproc; ++i) {
-      gantt.addSymbol(&proclabels[i]);
+    std::unordered_map<string, int> ready_time;
+    auto ind = in_degree(dag);
+    auto cmp = [](std::pair<int, string> a, std::pair<int, string> b){
+		 return a > b;};
+    std::priority_queue<std::pair<int, string>,
+			std::vector<std::pair<int, string>>,
+			decltype(cmp)> pqueue(cmp);
+
+    std::vector<int> proc_ready;
+    for (int i=0;i<nbproc; ++i)
+      proc_ready.push_back(0);
+    
+    for (auto s: dag.keySet()) {
+      ready_time[s] = 0;
+      if (ind[s] == 0)
+	pqueue.push(std::make_pair(ready_time[s], s));      
     }
 
-    for (auto& r: taskrect) {
-      gantt.addSymbol(&r);
+    while (! pqueue.empty()) {
+      //pop task
+      auto task = pqueue.top().second;
+      auto task_ready = pqueue.top().first;
+      pqueue.pop();
+
+      std::cout<<"scheduling "<<task<<"\n";
+      
+      //identify first processor ready
+      int minproc=0;
+      int minproc_time = proc_ready[0];
+      for (int i=1; i<nbproc; ++i) {
+	if (proc_ready[i] < minproc_time) {
+	  minproc = i;
+	  minproc_time = proc_ready[i];
+	}
+      }
+      
+      std::cout<<"minproc "<<minproc<< " available at "<<minproc_time<<"\n";
+      
+      
+      //schedule task
+      int sched_time = std::max(task_ready, minproc_time);
+      int endtime = sched_time+dag.getVertexData(task);
+      add_gantt_task(task, sched_time, endtime, minproc);
+
+      //update processor
+      proc_ready[minproc] = endtime;
+      
+      //update descendant
+      for (auto edge : dag.outgoingEdgeSetOf(task)) {
+	auto from = edge.from();
+	auto to = edge.to();
+
+	ready_time[to] = std::max(ready_time[to], endtime);
+      	ind[to] --;
+	if (ind[to] == 0)
+	  pqueue.push(std::make_pair(ready_time[to], to));      
+
+	std::cout<<"task "<<to<< " can't run before "<<ready_time[to]<<"\n";
+
+	
+      }
+      push_gantt_chart();
     }
 
-    for (auto& l: tasklabels) {
-      gantt.addSymbol(&l);
-    }
-    
-    gantt.setViewport(-40., (maxtime+2)*unittime_width, -20, nbproc*(procvspace+procheight));
-    
-    br.setDataStructure(gantt);
-    br.visualize();
+    push_gantt_chart();
   }
   
   

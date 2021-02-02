@@ -53,56 +53,78 @@ namespace depgraph {
     return order;
   }
   
-  void animate_toplevel_inner(bridges::GraphAdjList<string,int>& dag,    bridges::Bridges& br) {
+  int animate_toplevel_inner(bridges::GraphAdjList<string,int>& dag,
+			     bridges::Bridges& br,
+			     bool render) {
 
     auto order = topological_order(dag);
-
+    
+    std::cout<<"order size: "<<order.size()<<"\n";
+    
     std::unordered_map<string, int> level;
     std::unordered_map<string, int> maxparentlevel;
+
+    int maxlevel = 0;
     
     auto setlabel = [&](std::string vert) {
-		      auto myver = dag.getVertex(vert);
-		      myver->setLabel(vert
-				      +"\nP = "+std::to_string(dag.getVertexData(vert))
-				      +"\nMaxParentLevel="+std::to_string(maxparentlevel[vert])
-				      +"\nLevel = "+std::to_string(level[vert]));
-		    };
+    		      if (render) {
+    			auto myver = dag.getVertex(vert);
+    			myver->setLabel(vert
+    					+"\nP = "+std::to_string(dag.getVertexData(vert))
+    					+"\nMaxParentLevel="+std::to_string(maxparentlevel[vert])
+    					+"\nLevel = "+std::to_string(level[vert]));
+    		      }
+    		    };
 
 
     auto updatelevel = [&](std::string vert, int newlevel) {
-			 level[vert] = newlevel;
-			 setlabel(vert);
-		    };
+    			 level[vert] = newlevel;
+    			 maxlevel = std::max(maxlevel, newlevel);
+    			 setlabel(vert);
+    		    };
 
     auto updateparentlevel = [&](std::string vert, int newlevel) {
-			 maxparentlevel[vert] = newlevel;
-			 setlabel(vert);
-		    };
+    			 maxparentlevel[vert] = newlevel;
+    			 setlabel(vert);
+    		    };
     
     auto deactivateedge = [&](std::string from, std::string to) {
-			   dag.getLinkVisualizer(from, to)->setColor("lightgrey");
-			 };
+    			    if (render) {
+    			      dag.getLinkVisualizer(from, to)->setColor("lightgrey");
+    			    }
+    			 };
 
     auto highlightedge = [&](std::string from, std::string to) {
-			   dag.getLinkVisualizer(from, to)->setColor("red");
-			 };
+    			   if (render) {
+    			     std::cout<<"from "<<from<<" to "<<to<<"\n"<<std::flush; 
+    			     dag.getLinkVisualizer(from, to)->setColor("red");
+    			   }
+    			 };
 
 
     auto highlightvert = [&](std::string vertid) {
-			   auto myver = dag.getVertex(vertid);
-			   myver->setColor("red");
-			 };
+    			   if (render) {
+    			     auto myver = dag.getVertex(vertid);
+    			     myver->setColor("red");
+    			   }
+    			 };
 
 
     auto deactivatevert = [&](std::string vertid) {
-			    auto myver = dag.getVertex(vertid);
-			    myver->setColor("lightgrey");
-			  };
+    			    if (render) {
+    			      auto myver = dag.getVertex(vertid);
+    			      myver->setColor("lightgrey");
+    			    }
+    			  };
     
     for (auto v : order) {
       level[v] = 0;
       maxparentlevel[v] = 0;
       setlabel(v);
+    }
+
+    for (auto v : order) {
+      std::cout<<"v is "<<v<<"\n";
     }
     
     for (auto v : order) {
@@ -110,30 +132,43 @@ namespace depgraph {
       highlightvert(v);
       
       updatelevel(v, maxparentlevel[v] + dag.getVertexData(v));
-      br.visualize();
-      
+      if (render) {
+	br.visualize();
+      }
+
       for (auto edge : dag.outgoingEdgeSetOf(v)) {
 	auto from = edge.from();
 	auto to = edge.to();
 
+	std::cout<<"edge: "<<from<<" "<<to<<"\n";
+	
 	updateparentlevel(to, std::max(maxparentlevel[to], level[v]));
 	highlightedge(from, to);
 	
-	br.visualize();
+	if (render) {
+	  br.visualize();
+	}
 	deactivateedge(from, to);
       }
       
+      if (render)  {
+	br.visualize();
+      }
       
-      br.visualize();
       deactivatevert(v);
     }
-    
-    br.visualize();//to show the final deactivation
-    
+    std::cout<<"algo done\n";
+
+    if (render) {
+      br.visualize();//to show the final deactivation
+    }
+
+    return maxlevel;
   }
   
-  void animate_toplevel (bridges::GraphAdjList<string,int>& dag,
-			 int channel) {
+  int animate_toplevel (bridges::GraphAdjList<string, int>& dag,
+			int channel,
+			bool render = true) {
     std::string bridges_user;
     std::string bridges_apikey;
 
@@ -141,11 +176,10 @@ namespace depgraph {
     
     bridges::Bridges br(channel, bridges_user, bridges_apikey);
 
+    if (render)
+      br.setDataStructure(dag);
 
-    br.setDataStructure(dag);
-
-    animate_toplevel_inner(dag, br);
-    
+    return animate_toplevel_inner(dag, br, render);
     
   }
 }

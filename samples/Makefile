@@ -1,4 +1,4 @@
-CXXFLAGS=-std=c++14 -I ../bridges-cxx/src/ -I ../rapidjson/include/  -O3 -I ../includes
+CXXFLAGS=-std=c++14 -I ../bridges-cxx/src/ -I ../rapidjson/include/  -O3 -I ../includes -g
 LDFLAGS=
 LDLIBS=-l curl
 
