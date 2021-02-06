@@ -14,6 +14,7 @@ namespace depgraph {
 
 
   void animate_listscheduling_inner(bridges::GraphAdjList<string,int>& dag, int nbproc,
+				    bool showready,
 				    bridges::Bridges& brgantt,bridges::Bridges& brgraph) {
 
     double procheight = 50.;
@@ -81,6 +82,7 @@ namespace depgraph {
 			    bridges::Label l (name);
 			    l.setCenter((timestart+(timeend-timestart)/2)*unittime_width,
 					(where)*procvspace + (where+0.5)*procheight);
+			    l.setStrokeColor(bridges::Color(255,255,255,0.));
 			    tasklabels.push_back(l);
 			  };
 
@@ -167,8 +169,11 @@ namespace depgraph {
     auto updatelabel
       = [&](std::string task) {
 	  auto myver = dag.getVertex(task);
-	  myver->setLabel(task
-			  +"\nreadyTime = "+std::to_string(ready_time[task]));
+	  std::string lab = task
+	    +"\nP = "+std::to_string(dag.getVertexData(task));
+	  if (showready)
+	    lab += "\nreadyTime = "+std::to_string(ready_time[task]); 
+	  myver->setLabel(lab);
 	};
     
     std::vector<int> proc_ready;
@@ -249,7 +254,7 @@ namespace depgraph {
   
   void animate_listscheduling (bridges::GraphAdjList<string,int>& dag,
 			       int nbproc,
-			       int channelgantt, int channelgraph) {
+			       int channelgantt, int channelgraph, bool showready = true) {
     
     auto start = std::chrono::system_clock::now();
 
@@ -263,7 +268,7 @@ namespace depgraph {
 
 
 
-    animate_listscheduling_inner(dag, nbproc, brgantt, brgraph);
+    animate_listscheduling_inner(dag, nbproc, showready, brgantt, brgraph);
     
   }
 }

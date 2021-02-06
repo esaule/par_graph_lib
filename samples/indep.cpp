@@ -17,7 +17,7 @@ int main (int argc, char* argv[]) {
   
   //depgraph::animate_toplevel(lemonpie, 555);
   try {
-    depgraph::animate_listscheduling(indep, 4, 777, 888);
+    depgraph::animate_listscheduling(indep, 4, 777, 888, false);
   } catch (const char* c){
     std::cerr<<"exception: "<<c<<"\n";
   }
