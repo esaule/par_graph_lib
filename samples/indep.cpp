@@ -9,9 +9,9 @@ int main (int argc, char* argv[]) {
   for (int i=0; i< 20; ++i) {
     std::string task = std::to_string(i);
     
-    indep.addVertex(task, rand() % 10);
+    indep.addVertex(task, 1 + rand() % 10);
     
-    indep.getVertex(task)->setLocation(i*80, 0);
+    indep.getVertex(task)->setLocation(i*50, (i%2)*30);
   }
     
   
