@@ -71,7 +71,7 @@ int main (int argc, char* argv[]) {
     
   
   depgraph::animate_toplevel(lemonpie, 555);
-  //depgraph::animate_listscheduling(lemonpie, 3, 777, 888);
+  depgraph::animate_listscheduling(lemonpie, 3, 777, 888, false);
   
   return 0;
 }

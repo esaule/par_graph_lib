@@ -16,6 +16,9 @@ namespace depgraph {
   void animate_listscheduling_inner(bridges::GraphAdjList<string,int>& dag, int nbproc,
 				    bridges::Bridges& brgantt,bridges::Bridges& brgraph) {
 
+    reset_graphstyle(dag);
+    
+    
     double procheight = 50.;
     double procvspace = 10.;
     double proclabelxloc = -20.;
@@ -43,6 +46,8 @@ namespace depgraph {
     xaxis.addPoint(maxtime*unittime_width, 0);
 
     bridges::Label timel ("time");
+    timel.setStrokeColor("red");
+    timel.setFillColor("blue");
     timel.setLocation(maxtime*unittime_width+timelabelxspacing, 0+timelabelyspacing);
     
     std::vector<bridges::Polyline> tics;

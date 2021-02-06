@@ -3,6 +3,19 @@
 
 namespace depgraph {
 
+  void reset_graphstyle (bridges::GraphAdjList<string,int> & graph) {
+    for (auto vert: graph.keySet()) {
+      graph.getVertex(vert)->setColor("steelblue");
+      graph.getVertex(vert)->setLabel(vert);
+      
+      for (auto edge : graph.outgoingEdgeSetOf(vert)) {
+	auto from = edge.from();
+	auto to = edge.to();
+	graph.getLinkVisualizer(from, to) -> setColor("steelblue");
+      }
+    }
+  }
+  
   std::unordered_map<string, int> in_degree (bridges::GraphAdjList<string,int> const & graph){
     std::unordered_map<string, int> in_d;
     
@@ -57,12 +70,15 @@ namespace depgraph {
 			     bridges::Bridges& br,
 			     bool render) {
 
+    reset_graphstyle(dag);
+    
     auto order = topological_order(dag);
     
     std::cout<<"order size: "<<order.size()<<"\n";
     
     std::unordered_map<string, int> level;
     std::unordered_map<string, int> maxparentlevel;
+    std::unordered_map<string, string> parent;
 
     int maxlevel = 0;
     
@@ -83,10 +99,13 @@ namespace depgraph {
     			 setlabel(vert);
     		    };
 
-    auto updateparentlevel = [&](std::string vert, int newlevel) {
-    			 maxparentlevel[vert] = newlevel;
-    			 setlabel(vert);
-    		    };
+    auto updateparentlevel = [&](std::string from, std::string to) {
+			       if (maxparentlevel[to] < level[from]) {
+				 parent[to] = from;
+				 maxparentlevel[to] = level[from];
+				 setlabel(to);
+			       }
+			     };
     
     auto deactivateedge = [&](std::string from, std::string to) {
     			    if (render) {
@@ -121,10 +140,15 @@ namespace depgraph {
       level[v] = 0;
       maxparentlevel[v] = 0;
       setlabel(v);
+      parent[v] = v;
     }
 
     for (auto v : order) {
       std::cout<<"v is "<<v<<"\n";
+    }
+
+    if (render) {
+      br.visualize();
     }
     
     for (auto v : order) {
@@ -142,7 +166,7 @@ namespace depgraph {
 
 	std::cout<<"edge: "<<from<<" "<<to<<"\n";
 	
-	updateparentlevel(to, std::max(maxparentlevel[to], level[v]));
+	updateparentlevel(from, to);
 	highlightedge(from, to);
 	
 	if (render) {
@@ -161,6 +185,34 @@ namespace depgraph {
 
     if (render) {
       br.visualize();//to show the final deactivation
+    }
+
+
+    //tracing critical path 
+    maxlevel = -1;
+    std::string maxtask;
+    for (auto v: order) {
+      if (level[v] > maxlevel) {
+	maxlevel = level[v];
+	maxtask = v;
+      }
+    }
+
+    std::string prevtask;
+    highlightvert(maxtask);
+    if (render) {
+      br.visualize();
+    }
+    
+    while (maxtask != parent[maxtask]) {
+      prevtask = maxtask;
+      maxtask = parent[maxtask];
+      highlightedge(maxtask, prevtask);
+      highlightvert(maxtask);
+      if (render) {
+	br.visualize();
+      }
+      
     }
 
     return maxlevel;
