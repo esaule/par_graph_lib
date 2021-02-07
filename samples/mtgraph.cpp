@@ -19,25 +19,25 @@ int main (int argc, char* argv[]) {
   lemonpie.addVertex("L", 3);
 
 
-  int levelsp = 50;
+  int levelsp = 90;
   
-  lemonpie.getVertex("A")->setLocation(0*levelsp, 0);
-  lemonpie.getVertex("B")->setLocation(0*levelsp, 50);
+  lemonpie.getVertex("A")->setLocation(0*levelsp, 0*levelsp);
+  lemonpie.getVertex("B")->setLocation(0*levelsp, 1*levelsp);
 
-  lemonpie.getVertex("C")->setLocation(1*levelsp, 0);
-  lemonpie.getVertex("D")->setLocation(1*levelsp, 50);
-  lemonpie.getVertex("E")->setLocation(1*levelsp, 100);
+  lemonpie.getVertex("C")->setLocation(1*levelsp, 0*levelsp);
+  lemonpie.getVertex("D")->setLocation(1*levelsp, 1*levelsp);
+  lemonpie.getVertex("E")->setLocation(1*levelsp, 2*levelsp);
 
-  lemonpie.getVertex("G")->setLocation(2*levelsp, 0);
-  lemonpie.getVertex("H")->setLocation(2*levelsp, 50);
-  lemonpie.getVertex("I")->setLocation(2*levelsp, 100);
+  lemonpie.getVertex("G")->setLocation(2*levelsp, 0*levelsp);
+  lemonpie.getVertex("H")->setLocation(2*levelsp, 1*levelsp);
+  lemonpie.getVertex("I")->setLocation(2*levelsp, 2*levelsp);
 
-  lemonpie.getVertex("F")->setLocation(3*levelsp, 20);
+  lemonpie.getVertex("F")->setLocation(3*levelsp, 0.5*levelsp);
   
-  lemonpie.getVertex("J")->setLocation(4*levelsp, 0);
-  lemonpie.getVertex("K")->setLocation(4*levelsp, 50);
+  lemonpie.getVertex("J")->setLocation(4*levelsp, 0*levelsp);
+  lemonpie.getVertex("K")->setLocation(4*levelsp, 1*levelsp);
 
-  lemonpie.getVertex("L")->setLocation(5*levelsp, 50);
+  lemonpie.getVertex("L")->setLocation(5*levelsp, 0*levelsp);
   
 
   
@@ -70,7 +70,7 @@ int main (int argc, char* argv[]) {
 	  
   
   //depgraph::animate_toplevel(lemonpie, 555);
-  depgraph::animate_listscheduling(lemonpie, 3, 777, 888, false);
+  depgraph::animate_listscheduling(lemonpie, 3, 777, 888);
   
   return 0;
 }
