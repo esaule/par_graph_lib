@@ -47,8 +47,6 @@ namespace depgraph {
     xaxis.addPoint(maxtime*unittime_width, 0);
 
     bridges::Label timel ("time");
-    timel.setStrokeColor("red");
-    timel.setFillColor("blue");
     timel.setLocation(maxtime*unittime_width+timelabelxspacing, 0+timelabelyspacing);
     
     std::vector<bridges::Polyline> tics;
