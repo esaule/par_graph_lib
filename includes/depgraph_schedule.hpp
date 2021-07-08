@@ -8,7 +8,7 @@
 #include <Polyline.h>
 #include <Polygon.h>
 #include <Circle.h>
-#include <Label.h>
+#include <Text.h>
 
 namespace depgraph {
 
@@ -41,17 +41,26 @@ namespace depgraph {
     bridges::Polyline yaxis;
     yaxis.addPoint(0,0);
     yaxis.addPoint(0, nbproc*procheight+(nbproc-1)*procvspace);
+    yaxis.setStrokeWidth(1);
+    yaxis.setStrokeColor(bridges::Color("black"));
 
     bridges::Polyline xaxis;
     xaxis.addPoint(0, 0);
     xaxis.addPoint(maxtime*unittime_width, 0);
+    xaxis.setStrokeWidth(1);
+    xaxis.setStrokeColor(bridges::Color("black"));
 
-    bridges::Label timel ("time");
-    timel.setLocation(maxtime*unittime_width+timelabelxspacing, 0+timelabelyspacing);
+    
+    bridges::Text timel ("time");
+    timel.setAnchorLocation(maxtime*unittime_width+timelabelxspacing, 0+timelabelyspacing);
+    
+    //tics
     
     std::vector<bridges::Polyline> tics;
     for (int i=0; i<(int)maxtime; ++i) {
       bridges::Polyline tic;
+      tic.setStrokeWidth(1);
+      tic.setStrokeColor(bridges::Color("black"));
       tic.addPoint(i*unittime_width, 0);
       if (i%5 != 0)
 	tic.addPoint(i*unittime_width, -tic_length);
@@ -62,16 +71,18 @@ namespace depgraph {
 	  tic.addPoint(i*unittime_width, -tic_length*5);
       tics.push_back(tic);
     }
-    
-    std::vector<bridges::Label> proclabels;
+
+    //proclabels
+    std::vector<bridges::Text> proclabels;
     for (int i=0; i<nbproc; ++i) {
       std::string l = "Proc " + std::to_string(i);
-      bridges::Label lab (l);
-      lab.setLocation(proclabelxloc, (i+.5)*procheight+(i-1)*procvspace);
+      bridges::Text lab (l);
+      lab.setAnchorLocation(proclabelxloc, (i+.5)*procheight+(i-1)*procvspace);
+      lab.setAnchorAlignment("right", "middle");
       proclabels.push_back(lab);
     }
 
-    std::vector<bridges::Label> tasklabels;
+    std::vector<bridges::Text> tasklabels;
     std::vector<bridges::Rectangle> taskrect;
 
     auto add_gantt_task = [&](std::string name,
@@ -80,12 +91,17 @@ namespace depgraph {
 			    bridges::Rectangle r(timestart*unittime_width,(where)*(procheight+procvspace),
 						 (timeend-timestart)*unittime_width, procheight);
 			    maxtime = std::max(maxtime, timeend);
+			    r.setStrokeWidth(1);
+			    r.setStrokeColor(bridges::Color("black"));
+			    r.setFillColor(bridges::Color(0,255,0,30));
 			    taskrect.push_back(r);
 
-			    bridges::Label l (name);
-			    l.setCenter((timestart+(timeend-timestart)/2)*unittime_width,
+			    bridges::Text l (name);
+			    l.setAnchorLocation((timestart+(timeend-timestart)/2)*unittime_width,
 					(where)*procvspace + (where+0.5)*procheight);
 			    l.setStrokeColor(bridges::Color(255,255,255,0.));
+			    l.setAnchorAlignment("middle", "middle");
+			    l.setLayer(-1);
 			    tasklabels.push_back(l);
 			  };
 
@@ -267,8 +283,9 @@ namespace depgraph {
     get_bridges_account(bridges_user, bridges_apikey);
     
     bridges::Bridges brgantt(channelgantt, bridges_user, bridges_apikey);
+    brgantt.setServer("clone");
     bridges::Bridges brgraph(channelgraph, bridges_user, bridges_apikey);
-
+    brgraph.setServer("clone");
 
 
     animate_listscheduling_inner(dag, nbproc, showready, brgantt, brgraph);
