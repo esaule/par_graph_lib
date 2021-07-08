@@ -22,7 +22,7 @@ namespace depgraph {
     
     double procheight = 50.;
     double procvspace = 10.;
-    double proclabelxloc = -20.;
+    double proclabelxloc = -5.;
     double unittime_width = 15.;
     double tic_length = 2.;
     double timelabelyspacing = -10;
